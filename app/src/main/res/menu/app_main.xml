@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="Upload"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_file_upload_black_24dp">
+    </item>
+
+    <item android:title="Search"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_search_black_24dp">
+    </item>
+
+    <item android:title="About"
+        android:id="@+id/about">
+    </item>
+
+    <item android:title="Settings"
+        android:id="@+id/settings">
+    </item>
+
+    <item android:title="Logout"
+        android:id="@+id/logout">
+    </item>
+
+</menu>
