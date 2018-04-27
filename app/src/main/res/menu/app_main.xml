@@ -7,11 +7,6 @@
         android:icon="@drawable/ic_file_upload_black_24dp">
     </item>
 
-    <item android:title="Search"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_search_black_24dp">
-    </item>
-
     <item android:title="About"
         android:id="@+id/about">
     </item>
@@ -20,6 +15,12 @@
         android:id="@+id/settings">
     </item>
 
+    <item
+        app:showAsAction="always"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:id="@+id/app_bar_search"
+        android:title="Search"
+        app:actionViewClass="android.widget.SearchView" />
     <item android:title="Logout"
         android:id="@+id/logout">
     </item>

@@ -2,11 +2,14 @@ package com.lawrene.falcon.copycopy;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -32,6 +35,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 //
+    SearchView searchView;
     DatabaseReference mUserDatabase;
     DatabaseReference mPostDatabase;
 
@@ -46,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     String mUserLevel;
     RecyclerView mUserlist;
 
+    private ViewPager mViewPager;
+    SectionsPagerAdapter mSectionsPagerAdapter;
+    TabLayout mTabLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,49 +62,28 @@ public class MainActivity extends AppCompatActivity {
         mFireAuth = FirebaseAuth.getInstance();
         mFilesStore = FirebaseStorage.getInstance().getReference();
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-//        mPostDatabase = FirebaseDatabase.getInstance().getReference().child("Posts");
         mCurrentUser = mFireAuth.getCurrentUser();
 
+        searchView = (SearchView)findViewById(R.id.app_bar_search);
         mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("CopyCopy");
 
-//        List<Solution> newlist = new ArrayList<>();
-//        newlist.add(new Solution("21", "New title", R.drawable.ic_search_black_24dp));
-//        newlist.add(new Solution("21", "New title", R.drawable.ic_search_black_24dp));
-//        newlist.add(new Solution("21", "New title", R.drawable.ic_search_black_24dp));
-//        newlist.add(new Solution("21", "New title", R.drawable.ic_search_black_24dp));
-//        newlist.add(new Solution("21", "New title", R.drawable.ic_search_black_24dp));
-//        newlist.add(new Solution("21", "New title", R.drawable.ic_search_black_24dp));
-//        newlist.add(new Solution("21", "New title", R.drawable.ic_search_black_24dp));
-//        newlist.add(new Solution("21", "New title", R.drawable.ic_search_black_24dp));
-
-//        --------Firebase references----------
-//        mCurrentUser = mFireAuth.getCurrentUser();
-//        mUserDatabase = FirebaseDatabase.getInstance().getReference();
-//        mFilesStore = FirebaseStorage.getInstance().getReference();
-//        loaduserdata();
-//        loadallposts();
-
-
-//        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.main_recycler_view);
-//        SolutionAdapter solutionAdapter = new SolutionAdapter(this, newlist);
-//        recyclerView.setAdapter(solutionAdapter);
-//
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-//        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//
-//
-//
-//
-//
-
         mUserlist = (RecyclerView)findViewById(R.id.main_recycler_view);
         mUserlist.setHasFixedSize(true);
-        mUserlist.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        mUserlist.setLayoutManager(linearLayoutManager);
+//
+//        //Tabs
+//        mViewPager = (ViewPager)findViewById(R.id.main_pager);
+//        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+//
+//        mViewPager.setAdapter(mSectionsPagerAdapter);
+//
+//        mTabLayout = (TabLayout)findViewById(R.id.main_tabs);
+//        mTabLayout.setupWithViewPager(mViewPager);
+//
 
     }
 
@@ -209,4 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

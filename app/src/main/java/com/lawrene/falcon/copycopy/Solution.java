@@ -7,7 +7,12 @@ package com.lawrene.falcon.copycopy;
 public class Solution {
     long date;
     String title;
-    String image;
+    String url1;
+
+    public String getUrl1() {
+        return url1;
+    }
+
     String thumb_image;
     String recent;
 
@@ -33,9 +38,6 @@ public class Solution {
         return title;
     }
 
-    public String getimage() {
-        return image;
-    }
 
     public void setThumb_image(String thumb_image) {
         this.thumb_image = thumb_image;
@@ -49,7 +51,4 @@ public class Solution {
         this.title = title;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
 }

@@ -11,20 +11,21 @@
     <include layout="@layout/app_bar_layout" android:id="@+id/admin_appBar"/>
 
     <LinearLayout
+        android:gravity="center"
         android:layout_margin="10dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <EditText
-            android:layout_margin="15dp"
+            android:layout_margin="1dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter the post title"
             android:padding="5dp"
             android:id="@+id/admin_post_ttittle"/>
         <LinearLayout
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -46,7 +47,7 @@
 
 
         <LinearLayout
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -69,7 +70,7 @@
 
 
         <LinearLayout
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -92,7 +93,7 @@
 
 
         <LinearLayout
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -116,39 +117,83 @@
     </LinearLayout>
 
     <LinearLayout
-        android:gravity="center"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp">
 
-        <Button
-            android:layout_marginBottom="30dp"
-            android:textColor="@color/colorPrimaryDark"
-            android:padding="15dp"
-            android:layout_alignParentRight="true"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageOne"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <ImageView
+                android:id="@+id/imageTwo"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <ImageView
+                android:id="@+id/imageThree"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageFour"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <ImageView
+                android:id="@+id/imageFive"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <ImageView
+                android:id="@+id/imageSix"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:weightSum="2"
+            android:gravity="center"
             android:layout_alignParentTop="true"
-            android:background="#fff"
-            android:id="@+id/admin_select_btn"
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select file"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_weight="1"
+                android:textColor="@color/colorPrimaryDark"
+                android:background="#fff"
+                android:id="@+id/admin_select_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select file"/>
 
 
-        <Button
-            android:layout_marginBottom="30dp"
-            android:textColor="@color/colorPrimaryDark"
-            android:padding="15dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="#fff"
-            android:id="@+id/adminPostBtn"
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upload"/>
+            <Button
+                android:layout_weight="1"
+                android:textColor="@color/colorPrimaryDark"
+                android:background="#fff"
+                android:id="@+id/adminPostBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 

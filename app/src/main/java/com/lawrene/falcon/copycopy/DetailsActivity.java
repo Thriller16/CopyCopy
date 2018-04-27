@@ -20,21 +20,31 @@ public class DetailsActivity extends AppCompatActivity {
     DatabaseReference mPostDatabase;
     Toolbar mToolbar;
     TextView titleText, dateText;
-    ImageView full_image;
+    ImageView full_image_one;
+    ImageView full_image_two;
+    ImageView full_image_three;
+    ImageView full_image_four;
+    ImageView full_image_five;
+    ImageView full_image_six;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        mToolbar = (Toolbar)findViewById(R.id.details_bar);
+        mToolbar = (Toolbar) findViewById(R.id.details_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Details");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        titleText = (TextView)findViewById(R.id.ttiittllee);
-        dateText = (TextView)findViewById(R.id.ddaattee);
-        full_image = (ImageView)findViewById(R.id.imgg);
+        titleText = (TextView) findViewById(R.id.ttiittllee);
+        dateText = (TextView) findViewById(R.id.ddaattee);
+        full_image_one = (ImageView) findViewById(R.id.img_one);
+        full_image_two = (ImageView) findViewById(R.id.img_two);
+        full_image_three = (ImageView) findViewById(R.id.img_three);
+        full_image_four = (ImageView) findViewById(R.id.img_four);
+        full_image_five = (ImageView) findViewById(R.id.img_five);
+        full_image_six = (ImageView) findViewById(R.id.img_six);
 
         String postSchool = getIntent().getStringExtra("post_school");
         String postFaculty = getIntent().getStringExtra("post_faculty");
@@ -44,22 +54,56 @@ public class DetailsActivity extends AppCompatActivity {
 
         mPostDatabase = FirebaseDatabase.getInstance().getReference().child("Posts").child("Schools")
                 .child(postSchool).child(postFaculty).child(postDepartment).child(postLevel)
-        .child(postId);
+                .child(postId);
 
         loadpostdetails();
     }
 
-    private void loadpostdetails(){
+    private void loadpostdetails() {
+
         mPostDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 String postTitle = dataSnapshot.child("title").getValue().toString();
                 String postDate = dataSnapshot.child("date").getValue().toString();
-                String postImage = dataSnapshot.child("image").getValue().toString();
+                String postImageOne = dataSnapshot.child("url1").getValue().toString();
+                String postImageTwo = dataSnapshot.child("url2").getValue().toString();
+                String postImageThree = dataSnapshot.child("url3").getValue().toString();
+                String postImageFour = dataSnapshot.child("url4").getValue().toString();
+                String postImageFive = dataSnapshot.child("url5").getValue().toString();
+                String postImageSix = dataSnapshot.child("url6").getValue().toString();
 
                 titleText.setText(postTitle);
-                dateText.setText(postDate);
-                Picasso.get().load(postImage).into(full_image);
+
+                GetTimeAgo getTimeAgo = new GetTimeAgo();
+                long poostdate = Long.parseLong(postDate);
+                String convertedtime = getTimeAgo.getTimeAgo(poostdate, DetailsActivity.this);
+                dateText.setText(convertedtime);
+
+
+//               ------------------------------ Loading all the images into the view----------------------------
+                Picasso.get().load(postImageOne).into(full_image_one);
+                if (!postImageTwo.equals("")) {
+                    Picasso.get().load(postImageTwo).into(full_image_two);
+
+                    if (!postImageThree.equals("")) {
+                        Picasso.get().load(postImageThree).into(full_image_three);
+
+                        if(!postImageFour.equals("")){
+                            Picasso.get().load(postImageFour).into(full_image_four);
+
+                            if(!postImageFive.equals("")){
+                                Picasso.get().load(postImageFive).into(full_image_five);
+
+                                if(!postImageSix.equals("")){
+                                    Picasso.get().load(postImageSix).into(full_image_six);
+                                }
+                            }
+                        }
+                    }
+
+                }
             }
 
             @Override
