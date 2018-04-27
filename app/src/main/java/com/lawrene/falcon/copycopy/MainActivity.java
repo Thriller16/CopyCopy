@@ -2,8 +2,13 @@ package com.lawrene.falcon.copycopy;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     String mUserLevel;
     RecyclerView mUserlist;
 
-    private ViewPager mViewPager;
+    ViewPager mViewPager;
     SectionsPagerAdapter mSectionsPagerAdapter;
     TabLayout mTabLayout;
 
@@ -68,12 +74,14 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("CopyCopy");
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         mUserlist = (RecyclerView)findViewById(R.id.main_recycler_view);
         mUserlist.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         mUserlist.setLayoutManager(linearLayoutManager);
+
 //
 //        //Tabs
 //        mViewPager = (ViewPager)findViewById(R.id.main_pager);
@@ -85,6 +93,21 @@ public class MainActivity extends AppCompatActivity {
 //        mTabLayout.setupWithViewPager(mViewPager);
 //
 
+        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawerLayout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView= (NavigationView)findViewById(R.id.navView);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawerLayout);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
     }
 
     private void loaduserdata() {

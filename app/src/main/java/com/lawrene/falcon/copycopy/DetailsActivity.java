@@ -1,11 +1,15 @@
 package com.lawrene.falcon.copycopy;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -111,5 +117,37 @@ public class DetailsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    //Open downloaded folder
+    private void openDownloadedFolder() {
+        //First check if SD Card is present or not
+        if (new CheckForSDCard().isSDCardPresent()) {
+
+            //Get Download Directory File
+            File apkStorage = new File(
+                    Environment.getExternalStorageDirectory() + "/"
+                            + "CopyCopy Downloads");
+
+            //If file is not present then display Toast
+            if (!apkStorage.exists())
+                Toast.makeText(DetailsActivity.this, "Right now there is no directory. Please download some file first.", Toast.LENGTH_SHORT).show();
+
+            else {
+
+                //If directory is present Open Folder
+
+                /** Note: Directory will open only if there is a app to open directory like File Manager, etc.  **/
+
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath()
+                        + "/" + "CopyCopy Downloads");
+                intent.setDataAndType(uri, "file/*");
+                startActivity(Intent.createChooser(intent, "Open Download Folder"));
+            }
+
+        } else
+            Toast.makeText(DetailsActivity.this, "Oops!! There is no SD Card.", Toast.LENGTH_SHORT).show();
+
     }
 }

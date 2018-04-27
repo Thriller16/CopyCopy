@@ -50,12 +50,14 @@
 
 
             <ImageView
+                android:scaleType="centerInside"
                 android:layout_margin="10dp"
                 android:id="@+id/img_one"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
             <ImageView
+                android:scaleType="centerInside"
                 android:layout_margin="10dp"
                 android:id="@+id/img_two"
                 android:layout_width="match_parent"

@@ -107,7 +107,7 @@ public class AdminActivity extends AppCompatActivity {
         if (requestCode == GALLERY_PICK && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
             CropImage.activity(imageUri)
-                    .setAspectRatio(1, 1)
+                    .setInitialCropWindowPaddingRatio(0)
                     .start(this);
         }
 
