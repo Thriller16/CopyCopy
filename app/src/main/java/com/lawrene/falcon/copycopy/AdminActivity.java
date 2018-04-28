@@ -20,13 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -34,7 +38,10 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import id.zelory.compressor.Compressor;
 
@@ -78,6 +85,8 @@ public class AdminActivity extends AppCompatActivity {
     String mDownloadURLSix = "";
 
     DatabaseReference mPostDatabase;
+    DatabaseReference mNotificationsDatabase;
+    DatabaseReference mUsersDatabase;
     StorageReference mFilesStorage;
     StorageReference mThumbFireStorage;
 
@@ -98,6 +107,8 @@ public class AdminActivity extends AppCompatActivity {
         loadOnClick();
 
         mPostDatabase = FirebaseDatabase.getInstance().getReference().child("Posts").child("Schools");
+        mNotificationsDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
     @Override
@@ -144,25 +155,25 @@ public class AdminActivity extends AppCompatActivity {
 
     public void loadAllViews() {
 
-        mToolbar = (Toolbar) findViewById(R.id.admin_appBar);
+        mToolbar = findViewById(R.id.admin_appBar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Administrator");
 
         //-----------------------------Setting up the views-----------------------
-        mSchoolSpinner = (Spinner) findViewById(R.id.adminschoolspinner);
-        mFacultySpinner = (Spinner) findViewById(R.id.adminfacultyspinner);
-        mDepartmentSpinner = (Spinner) findViewById(R.id.admindept_spinner);
-        mLevelSpinner = (Spinner) findViewById(R.id.adminlevel_spinner);
-        mUploadBtn = (Button) findViewById(R.id.adminPostBtn);
-        mSelectBtn = (Button) findViewById(R.id.admin_select_btn);
-        mPostTitleEdt = (EditText) findViewById(R.id.admin_post_ttittle);
+        mSchoolSpinner = findViewById(R.id.adminschoolspinner);
+        mFacultySpinner = findViewById(R.id.adminfacultyspinner);
+        mDepartmentSpinner = findViewById(R.id.admindept_spinner);
+        mLevelSpinner = findViewById(R.id.adminlevel_spinner);
+        mUploadBtn = findViewById(R.id.adminPostBtn);
+        mSelectBtn = findViewById(R.id.admin_select_btn);
+        mPostTitleEdt = findViewById(R.id.admin_post_ttittle);
 
-        mImageOne = (ImageView) findViewById(R.id.imageOne);
-        mImageTwo = (ImageView) findViewById(R.id.imageTwo);
-        mImageThree = (ImageView) findViewById(R.id.imageThree);
-        mImageFour = (ImageView) findViewById(R.id.imageFour);
-        mImageFive = (ImageView) findViewById(R.id.imageFive);
-        mImageSix = (ImageView) findViewById(R.id.imageSix);
+        mImageOne = findViewById(R.id.imageOne);
+        mImageTwo = findViewById(R.id.imageTwo);
+        mImageThree = findViewById(R.id.imageThree);
+        mImageFour = findViewById(R.id.imageFour);
+        mImageFive = findViewById(R.id.imageFive);
+        mImageSix = findViewById(R.id.imageSix);
 
         //---------------------Setting up the arrayadapter to use for the spinners------------------
         ArrayAdapter school_array_adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, allschools);
@@ -359,7 +370,7 @@ public class AdminActivity extends AppCompatActivity {
 
 
 //                                                                    -------------------------------Uploading image four-------------------------
-                                                                            if(mUriFour != null){
+                                                                            if (mUriFour != null) {
                                                                                 mFilesStorage.child(uidforimage + "4.jpg").putFile(mUriFour).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                                                                     @Override
                                                                                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -399,8 +410,9 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                             mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                 @Override
                                                                                                                                 public void onSuccess(Void aVoid) {
+                                                                                                                                    sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                                                     mProgressDialog.dismiss();
-                                                                                                                                    Toast.makeText(AdminActivity.this, "File Uploaded Succesfully" + uidforimage, Toast.LENGTH_SHORT).show();
+                                                                                                                                    Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                                                 }
                                                                                                                             });
 
@@ -423,8 +435,9 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                 mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                     @Override
                                                                                                                     public void onSuccess(Void aVoid) {
+                                                                                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                                         mProgressDialog.dismiss();
-                                                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully" + uidforimage, Toast.LENGTH_SHORT).show();
+                                                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                                     }
                                                                                                                 });
                                                                                                             }
@@ -447,8 +460,9 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                 mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
                                                                                                     public void onSuccess(Void aVoid) {
+                                                                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                         mProgressDialog.dismiss();
-                                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully" + uidforimage, Toast.LENGTH_SHORT).show();
+                                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                     }
                                                                                                 });
                                                                                             }
@@ -470,15 +484,16 @@ public class AdminActivity extends AppCompatActivity {
                                                                                 mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
+                                                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                         mProgressDialog.dismiss();
-                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully" + uidforimage, Toast.LENGTH_SHORT).show();
+                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                     }
                                                                                 });
                                                                             }
                                                                         }
                                                                     }
                                                                 });
-                                                            }else {
+                                                            } else {
                                                                 HashMap<String, Object> newpostmap = new HashMap<>();
                                                                 newpostmap.put("title", postTitle);
                                                                 newpostmap.put("date", ServerValue.TIMESTAMP);
@@ -493,8 +508,9 @@ public class AdminActivity extends AppCompatActivity {
                                                                 mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void aVoid) {
+                                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                         mProgressDialog.dismiss();
-                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully" + uidforimage, Toast.LENGTH_SHORT).show();
+                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                     }
                                                                 });
                                                             }
@@ -516,8 +532,9 @@ public class AdminActivity extends AppCompatActivity {
                                                 mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
+                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                         mProgressDialog.dismiss();
-                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully" + uidforimage, Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                             }
@@ -534,6 +551,54 @@ public class AdminActivity extends AppCompatActivity {
                     mProgressDialog.dismiss();
                     Toast.makeText(AdminActivity.this, "Could not post to firebase", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+    }
+
+    public void sendRequiredUsersNotifications(final String title, final String userSchool, final String userFaculty, final String userDepartment, final String userLevel) {
+
+        mUsersDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int i = 0;
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+
+                    String key = ds.getKey();
+                    String school = ds.child("school").getValue().toString();
+                    String faculty = ds.child("faculty").getValue().toString();
+                    String department = ds.child("department").getValue().toString();
+                    String level = ds.child("level").getValue().toString();
+
+                    Toast.makeText(AdminActivity.this, key + school + faculty + department + level, Toast.LENGTH_SHORT).show();
+
+
+                    HashMap<String, Object> notificationHashmap = new HashMap<>();
+                    notificationHashmap.put("title", title);
+                    notificationHashmap.put("message", "Click here to see");
+                    notificationHashmap.put("time", ServerValue.TIMESTAMP);
+
+
+                    if (school.equals(userSchool) && faculty.equals(userFaculty) && department.equals(userDepartment) && level.equals(userLevel)) {
+                        mNotificationsDatabase.child(key).push().setValue(notificationHashmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(AdminActivity.this, "Notification sent to required users", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

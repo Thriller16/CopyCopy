@@ -1,12 +1,18 @@
 package com.lawrene.falcon.copycopy;
 
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Environment;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,13 +22,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 public class DetailsActivity extends AppCompatActivity {
 
+    Button button;
     DatabaseReference mPostDatabase;
     Toolbar mToolbar;
     TextView titleText, dateText;
@@ -51,6 +55,7 @@ public class DetailsActivity extends AppCompatActivity {
         full_image_four = (ImageView) findViewById(R.id.img_four);
         full_image_five = (ImageView) findViewById(R.id.img_five);
         full_image_six = (ImageView) findViewById(R.id.img_six);
+        button = (Button)findViewById(R.id.buttin);
 
         String postSchool = getIntent().getStringExtra("post_school");
         String postFaculty = getIntent().getStringExtra("post_faculty");
@@ -73,12 +78,12 @@ public class DetailsActivity extends AppCompatActivity {
 
                 String postTitle = dataSnapshot.child("title").getValue().toString();
                 String postDate = dataSnapshot.child("date").getValue().toString();
-                String postImageOne = dataSnapshot.child("url1").getValue().toString();
-                String postImageTwo = dataSnapshot.child("url2").getValue().toString();
-                String postImageThree = dataSnapshot.child("url3").getValue().toString();
-                String postImageFour = dataSnapshot.child("url4").getValue().toString();
-                String postImageFive = dataSnapshot.child("url5").getValue().toString();
-                String postImageSix = dataSnapshot.child("url6").getValue().toString();
+                final String postImageOne = dataSnapshot.child("url1").getValue().toString();
+                final String postImageTwo = dataSnapshot.child("url2").getValue().toString();
+                final String postImageThree = dataSnapshot.child("url3").getValue().toString();
+                final String postImageFour = dataSnapshot.child("url4").getValue().toString();
+                final String postImageFive = dataSnapshot.child("url5").getValue().toString();
+                final String postImageSix = dataSnapshot.child("url6").getValue().toString();
 
                 titleText.setText(postTitle);
 
@@ -110,6 +115,67 @@ public class DetailsActivity extends AppCompatActivity {
                     }
 
                 }
+
+                full_image_one.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Boolean result=isDownloadManagerAvailable(getApplicationContext());
+                        if (result)
+                            downloadFile(postImageOne);
+                        return true;
+                    }
+                });
+
+                full_image_two.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Boolean result=isDownloadManagerAvailable(getApplicationContext());
+                        if (result)
+                            downloadFile(postImageTwo);
+                        return true;
+                    }
+                });
+
+                full_image_three.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Boolean result=isDownloadManagerAvailable(getApplicationContext());
+                        if (result)
+                            downloadFile(postImageThree);
+                        return true;
+                    }
+                });
+
+                full_image_four.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Boolean result=isDownloadManagerAvailable(getApplicationContext());
+                        if (result)
+                            downloadFile(postImageFour);
+                        return true;
+                    }
+                });
+
+                full_image_five.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Boolean result=isDownloadManagerAvailable(getApplicationContext());
+                        if (result)
+                            downloadFile(postImageFive);
+                        return true;
+                    }
+                });
+
+                full_image_six.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Boolean result=isDownloadManagerAvailable(getApplicationContext());
+                        if (result)
+                            downloadFile(postImageSix);
+                        return true;
+                    }
+                });
+
             }
 
             @Override
@@ -117,37 +183,51 @@ public class DetailsActivity extends AppCompatActivity {
 
             }
         });
+
+
+
     }
 
-    //Open downloaded folder
-    private void openDownloadedFolder() {
-        //First check if SD Card is present or not
-        if (new CheckForSDCard().isSDCardPresent()) {
+    public void downloadFile(String url){
+        String DownloadUrl = url;
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(DownloadUrl));
+        request.setDescription("Your file is now being downloaded");   //appears the same in Notification bar while downloading
+        request.setTitle("New File.jpg");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            request.allowScanningByMediaScanner();
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        }
+        request.setDestinationInExternalFilesDir(getApplicationContext(),null, "sample.pdf");
 
-            //Get Download Directory File
-            File apkStorage = new File(
-                    Environment.getExternalStorageDirectory() + "/"
-                            + "CopyCopy Downloads");
+        // get download service and enqueue file
+        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+        Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
+    }
 
-            //If file is not present then display Toast
-            if (!apkStorage.exists())
-                Toast.makeText(DetailsActivity.this, "Right now there is no directory. Please download some file first.", Toast.LENGTH_SHORT).show();
-
-            else {
-
-                //If directory is present Open Folder
-
-                /** Note: Directory will open only if there is a app to open directory like File Manager, etc.  **/
-
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getPath()
-                        + "/" + "CopyCopy Downloads");
-                intent.setDataAndType(uri, "file/*");
-                startActivity(Intent.createChooser(intent, "Open Download Folder"));
+    public static boolean isDownloadManagerAvailable(Context context) {
+        try {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+                return false;
             }
-
-        } else
-            Toast.makeText(DetailsActivity.this, "Oops!! There is no SD Card.", Toast.LENGTH_SHORT).show();
-
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.setClassName("com.android.providers.downloads.ui","com.android.providers.downloads.ui.DownloadList");
+//            List <resolveinfo> list = context.getPackageManager().queryIntentActivities(intent,
+//                    PackageManager.MATCH_DEFAULT_ONLY);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
+//    //Check if internet is present or not
+//    private boolean isConnectingToInternet() {
+//        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo networkInfo = connectivityManager
+//                .getActiveNetworkInfo();
+//        if (networkInfo != null && networkInfo.isConnected())
+//            return true;
+//        else
+//            return false;
+//    }
 }

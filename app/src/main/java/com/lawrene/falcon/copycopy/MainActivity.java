@@ -147,6 +147,8 @@ public class MainActivity extends AppCompatActivity {
                                 long poostdate = Long.parseLong(postdate);
                                 String convertedtime = getTimeAgo.getTimeAgo(poostdate, MainActivity.this);
                                 viewHolder.setDate(convertedtime);
+
+
                             }
 
                             @Override

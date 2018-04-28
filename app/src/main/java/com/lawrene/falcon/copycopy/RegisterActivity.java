@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -212,7 +213,11 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+
+                    String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
                     HashMap<String, String> userMap = new HashMap<>();
+                    userMap.put("device_token", deviceToken);
                     userMap.put("school", school);
                     userMap.put("faculty", faculty);
                     userMap.put("department", department);
