@@ -1,7 +1,10 @@
 package com.lawrene.falcon.copycopy;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -33,6 +36,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -108,6 +113,36 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            String channelId  = getString(R.string.default_notification_channel_id);
+            String channelName = getString(R.string.default_notification_channel_name);
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW));
+        }
+
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d("TAG", "Key: " + key + " Value: " + value);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     private void loaduserdata() {
@@ -217,6 +252,27 @@ public class MainActivity extends AppCompatActivity {
                 mFireAuth.signOut();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
+                break;
+
+//                ---------------------Test subscribe to topics------------
+            case R.id.about:
+                // [START subscribe_topics]
+                FirebaseMessaging.getInstance().subscribeToTopic("news");
+                // [END subscribe_topics]
+
+                // Log and toast
+                String msg = getString(R.string.msg_subscribed);
+                Log.i("TAG", msg);
+                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.settings:
+                String token = FirebaseInstanceId.getInstance().getToken();
+
+                // Log and toast
+                String msgg = getString(R.string.msg_token_fmt, token);
+                Log.i("TAGGER", msgg);
+                Toast.makeText(MainActivity.this, msgg, Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
