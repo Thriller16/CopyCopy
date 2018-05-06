@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group>
 
         <item android:title="Upload"
             android:id="@+id/user_upload"
@@ -21,7 +21,9 @@
             android:icon="@drawable/ic_thumb_up_black_24dp">
         </item>
 
-        <item android:title="Log Out"
+        <item
+            android:id="@+id/logout_nav"
+            android:title="Log Out"
             android:icon="@drawable/ic_logout1">
         </item>
     </group>

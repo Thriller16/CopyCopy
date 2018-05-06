@@ -671,7 +671,7 @@ public class AdminActivity extends AppCompatActivity {
                     String department = ds.child("department").getValue().toString();
                     String level = ds.child("level").getValue().toString();
 
-                    Toast.makeText(AdminActivity.this, key + school + faculty + department + level, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(AdminActivity.this, key + school + faculty + department + level, Toast.LENGTH_SHORT).show();
 
 
                     HashMap<String, Object> notificationHashmap = new HashMap<>();

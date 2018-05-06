@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,8 +48,7 @@ public class RecentsFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_recents, container, false);
 
@@ -85,9 +85,10 @@ public class RecentsFragment extends Fragment {
                         Solution.class,
                         R.layout.list_item_main,
                         MainViewHolder.class,
-                        mPostDatabase
+                        mPostDatabase.child("").child("")
 
                 ) {
+
 
                     @Override
                     protected void populateViewHolder(final MainViewHolder viewHolder, final Solution model, int position) {
@@ -106,7 +107,7 @@ public class RecentsFragment extends Fragment {
                                 long poostdate = Long.parseLong(postdate);
                                 String convertedtime = getTimeAgo.getTimeAgo(poostdate, getContext());
                                 viewHolder.setDate(convertedtime);
-                                firebaseRecyclerAdapter.notifyDataSetChanged();
+//                                firebaseRecyclerAdapter.notifyDataSetChanged();
 
                             }
 
@@ -128,6 +129,7 @@ public class RecentsFragment extends Fragment {
                             startActivity(profile_intent);
                         }
                     });
+//                        Toast.makeText(getContext(), "" + postkey, Toast.LENGTH_SHORT).show();
                     }
                 };
 

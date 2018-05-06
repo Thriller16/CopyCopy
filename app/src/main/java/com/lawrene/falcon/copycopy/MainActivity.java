@@ -47,7 +47,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     //
-    SearchView searchView;
     FirebaseAuth mFireAuth;
     Toolbar mToolbar;
     FirebaseUser mCurrentUser;
@@ -55,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     SectionsPagerAdapter mSectionsPagerAdapter;
     TabLayout mTabLayout;
     DatabaseReference mUserDatabase;
+    android.support.v7.widget.SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +65,9 @@ public class MainActivity extends AppCompatActivity {
         mCurrentUser = mFireAuth.getCurrentUser();
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        searchView = (SearchView) findViewById(R.id.app_bar_search);
-        mToolbar = (Toolbar) findViewById(R.id.admin_approve);
+        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Approve Posts");
+        getSupportActionBar().setTitle("CopyCopy");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
@@ -117,10 +116,12 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-                Intent uploadIntent = new Intent(MainActivity.this, AdminActivity.class);
-                uploadIntent.putExtra("user_id", mCurrentUser.getUid());
-                startActivity(uploadIntent);
                 break;
+                    case R.id.logout_nav:
+                        mFireAuth.signOut();
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        finish();
+                        break;
             }
 
             DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -155,33 +156,39 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.logout:
                 mFireAuth.signOut();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
                 break;
 
-//                ---------------------Test subscribe to topics------------
             case R.id.about:
-//                // [START subscribe_topics]
-//                FirebaseMessaging.getInstance().subscribeToTopic("news");
-//                // [END subscribe_topics]
-//
-//                // Log and toast
-//                String msg = getString(R.string.msg_subscribed);
-//                Log.i("TAG", msg);
-//                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.settings:
-                String token = FirebaseInstanceId.getInstance().getToken();
+                break;
 
-                // Log and toast
-                String msgg = getString(R.string.msg_token_fmt, token);
-                Log.i("TAGGER", msgg);
-                Toast.makeText(MainActivity.this, msgg, Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    long previousTime;
+    @Override
+    public void onBackPressed() {
+        searchView = (SearchView) findViewById(R.id.app_bar_search);
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+            return;
+        } else {
+            if (2000 + previousTime > (previousTime = System.currentTimeMillis())) {
+                MainActivity.this.finish();
+                moveTaskToBack(true);
+
+            } else {
+                Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
