@@ -8,24 +8,16 @@ public class Solution {
     long date;
     String title;
     String url1;
+    String posted_by;
+    String thumb_image;
 
     public String getUrl1() {
         return url1;
     }
 
-    String thumb_image;
-    String recent;
 
     public String getThumb_image() {
         return thumb_image;
-    }
-
-    public String getRecent() {
-        return recent;
-    }
-
-    public void setRecent(String recent) {
-        this.recent = recent;
     }
 
     public Solution(){}
@@ -38,6 +30,17 @@ public class Solution {
         return title;
     }
 
+    public String getPosted_by() {
+        return posted_by;
+    }
+
+    public void setUrl1(String url1) {
+        this.url1 = url1;
+    }
+
+    public void setPosted_by(String posted_by) {
+        this.posted_by = posted_by;
+    }
 
     public void setThumb_image(String thumb_image) {
         this.thumb_image = thumb_image;

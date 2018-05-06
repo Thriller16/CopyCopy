@@ -218,10 +218,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                     HashMap<String, String> userMap = new HashMap<>();
                     userMap.put("device_token", deviceToken);
+                    userMap.put("can_upload","true");
+                    userMap.put("earnings", "0");
                     userMap.put("school", school);
                     userMap.put("faculty", faculty);
                     userMap.put("department", department);
                     userMap.put("level", level);
+
                     FirebaseUser currentuser = mFireAuth.getCurrentUser();
 
                     //------------------------Second step pushing uservalues to db---------------------------

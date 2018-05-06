@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,7 +23,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,10 +36,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import id.zelory.compressor.Compressor;
 
@@ -66,8 +61,8 @@ public class AdminActivity extends AppCompatActivity {
     Button mUploadBtn, mSelectBtn;
     ProgressDialog mProgressDialog;
     EditText mPostTitleEdt;
-
     ImageView mImageOne, mImageTwo, mImageThree, mImageFour, mImageFive, mImageSix;
+
 
     Toolbar mToolbar;
     Uri mUriOne;
@@ -84,7 +79,9 @@ public class AdminActivity extends AppCompatActivity {
     String mDownloadURLFive = "";
     String mDownloadURLSix = "";
 
+
     DatabaseReference mPostDatabase;
+    DatabaseReference mUserPostDatabase;
     DatabaseReference mNotificationsDatabase;
     DatabaseReference mUsersDatabase;
     StorageReference mFilesStorage;
@@ -92,6 +89,7 @@ public class AdminActivity extends AppCompatActivity {
 
     String mSchool, mFaculty, mDepartment, mlevel;
     FirebaseAuth mFireAuth;
+    String userWhoPosted = "";
 
     private static final int GALLERY_PICK = 1;
 
@@ -105,10 +103,14 @@ public class AdminActivity extends AppCompatActivity {
 
         loadAllViews();
         loadOnClick();
+        checkUser();
 
         mPostDatabase = FirebaseDatabase.getInstance().getReference().child("Posts").child("Schools");
+        mUserPostDatabase = FirebaseDatabase.getInstance().getReference().child("PostsByUsers");
         mNotificationsDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        Log.i("TAG", "The user who posted is" + userWhoPosted);
     }
 
     @Override
@@ -156,8 +158,11 @@ public class AdminActivity extends AppCompatActivity {
     public void loadAllViews() {
 
         mToolbar = findViewById(R.id.admin_appBar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Administrator");
+//        setSupportActionBar(mToolbar);
+//        getSupportActionBar().setTitle("Administrator");
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        mToolbar.setTitle("Upload Files");
 
         //-----------------------------Setting up the views-----------------------
         mSchoolSpinner = findViewById(R.id.adminschoolspinner);
@@ -176,24 +181,32 @@ public class AdminActivity extends AppCompatActivity {
         mImageSix = findViewById(R.id.imageSix);
 
         //---------------------Setting up the arrayadapter to use for the spinners------------------
-        ArrayAdapter school_array_adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, allschools);
+        ArrayAdapter<String> school_array_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allschools);
         school_array_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSchoolSpinner.setAdapter(school_array_adapter);
 
-        ArrayAdapter faculty_array_adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, allfaculties);
+        ArrayAdapter<String> faculty_array_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allfaculties);
         faculty_array_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mFacultySpinner.setAdapter(faculty_array_adapter);
 
-        ArrayAdapter dept_array_adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, alldepartments);
+        ArrayAdapter<String> dept_array_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, alldepartments);
         dept_array_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mDepartmentSpinner.setAdapter(dept_array_adapter);
 
-        ArrayAdapter level_array_adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, alllevels);
+        ArrayAdapter<String> level_array_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, alllevels);
         level_array_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mLevelSpinner.setAdapter(level_array_adapter);
     }
 
     public void loadOnClick() {
+
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         mUploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -246,11 +259,11 @@ public class AdminActivity extends AppCompatActivity {
                         alldepartments = alldepartmentsEng;
                         alllevels = alllevelsEng;
 
-                        ArrayAdapter eng_depts_adapter = new ArrayAdapter(AdminActivity.this, android.R.layout.simple_spinner_item, alldepartments);
+                        ArrayAdapter<String> eng_depts_adapter = new ArrayAdapter<>(AdminActivity.this, android.R.layout.simple_spinner_item, alldepartments);
                         eng_depts_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         mDepartmentSpinner.setAdapter(eng_depts_adapter);
 
-                        ArrayAdapter eng_levels_adapter = new ArrayAdapter(AdminActivity.this, android.R.layout.simple_spinner_item, alllevels);
+                        ArrayAdapter<String> eng_levels_adapter = new ArrayAdapter<>(AdminActivity.this, android.R.layout.simple_spinner_item, alllevels);
                         eng_levels_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         mLevelSpinner.setAdapter(eng_levels_adapter);
                         break;
@@ -260,11 +273,11 @@ public class AdminActivity extends AppCompatActivity {
                         alldepartments = alldepartmentsSci;
                         alllevels = alllevelsSci;
 
-                        ArrayAdapter science_adapter = new ArrayAdapter(AdminActivity.this, android.R.layout.simple_spinner_item, alldepartments);
+                        ArrayAdapter<String> science_adapter = new ArrayAdapter<>(AdminActivity.this, android.R.layout.simple_spinner_item, alldepartments);
                         science_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         mDepartmentSpinner.setAdapter(science_adapter);
 
-                        ArrayAdapter sci_levels_adapter = new ArrayAdapter(AdminActivity.this, android.R.layout.simple_spinner_item, alllevels);
+                        ArrayAdapter<String> sci_levels_adapter = new ArrayAdapter<>(AdminActivity.this, android.R.layout.simple_spinner_item, alllevels);
                         sci_levels_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         mLevelSpinner.setAdapter(sci_levels_adapter);
                 }
@@ -315,111 +328,75 @@ public class AdminActivity extends AppCompatActivity {
 
 
         final String postTitle = mPostTitleEdt.getText().toString();
-        HashMap<String, Object> postmap = new HashMap<>();
-        postmap.put("title", postTitle);
-        postmap.put("date", "666 mayy");
-        postmap.put("url1", mDownloadURLOne);
-        postmap.put("thumb_image", mThumbDownloadURLOne);
 
-        final String uidforimage = mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).push().getKey().toString();
+        final String uidforimage = mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).push().getKey();
 
-        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(postmap).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
+        mFilesStorage = FirebaseStorage.getInstance().getReference().child(mSchool)
+                .child(mFaculty).child(mDepartment).child(mlevel)
+                .child(uidforimage);
 
-                    mFilesStorage = FirebaseStorage.getInstance().getReference().child(mSchool)
-                            .child(mFaculty).child(mDepartment).child(mlevel)
-                            .child(uidforimage);
-
-                    mThumbFireStorage = FirebaseStorage.getInstance().getReference().child(mSchool)
-                            .child(mFaculty).child(mDepartment).child(mlevel)
-                            .child("thumbnails").child(uidforimage).child(uidforimage + ".jpg");
+        mThumbFireStorage = FirebaseStorage.getInstance().getReference().child(mSchool)
+                .child(mFaculty).child(mDepartment).child(mlevel)
+                .child("thumbnails").child(uidforimage).child(uidforimage + ".jpg");
 
 //                    -------------------------Uploading image one-----------------------------
-                    mFilesStorage.child(uidforimage + "1.jpg").putFile(mUriOne).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                mDownloadURLOne = task.getResult().getDownloadUrl().toString();
-                                UploadTask uploadTask = mThumbFireStorage.putBytes(thumb_byte);
+        mFilesStorage.child(uidforimage + "1.jpg").putFile(mUriOne).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    mDownloadURLOne = task.getResult().getDownloadUrl().toString();
+                    UploadTask uploadTask = mThumbFireStorage.putBytes(thumb_byte);
 
-                                uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> thumb_task) {
-                                        if (thumb_task.isSuccessful()) {
-                                            mThumbDownloadURLOne = thumb_task.getResult().getDownloadUrl().toString();
+                    uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> thumb_task) {
+                            if (thumb_task.isSuccessful()) {
+                                mThumbDownloadURLOne = thumb_task.getResult().getDownloadUrl().toString();
 
 
 //                                            -------------------------------Uploading image two---------------------------------
-                                            if (mUriTwo != null) {
-                                                mFilesStorage.child(uidforimage + "2.jpg").putFile(mUriTwo).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            mDownloadURLTwo = task.getResult().getDownloadUrl().toString();
+                                if (mUriTwo != null) {
+                                    mFilesStorage.child(uidforimage + "2.jpg").putFile(mUriTwo).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                mDownloadURLTwo = task.getResult().getDownloadUrl().toString();
 
 
 //                                                        -----------------------Uploading image three-----------------------------------
-                                                            if (mUriThree != null) {
-                                                                mFilesStorage.child(uidforimage + "3.jpg").putFile(mUriThree).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                                                        if (task.isSuccessful()) {
-                                                                            mDownloadURLThree = task.getResult().getDownloadUrl().toString();
+                                                if (mUriThree != null) {
+                                                    mFilesStorage.child(uidforimage + "3.jpg").putFile(mUriThree).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                mDownloadURLThree = task.getResult().getDownloadUrl().toString();
 
 
 //                                                                    -------------------------------Uploading image four-------------------------
-                                                                            if (mUriFour != null) {
-                                                                                mFilesStorage.child(uidforimage + "4.jpg").putFile(mUriFour).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                                                                    @Override
-                                                                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                                                                        if (task.isSuccessful()) {
-                                                                                            mDownloadURLFour = task.getResult().getDownloadUrl().toString();
+                                                                if (mUriFour != null) {
+                                                                    mFilesStorage.child(uidforimage + "4.jpg").putFile(mUriFour).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                mDownloadURLFour = task.getResult().getDownloadUrl().toString();
 
 
 //                                                                                ----------------------------------Uplaoding image five-------------------------
-                                                                                            if (mUriFive != null) {
-                                                                                                mFilesStorage.child(uidforimage + "5.jpg").putFile(mUriFive).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                                                                                    @Override
-                                                                                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                                                                                        if (task.isSuccessful()) {
-                                                                                                            mDownloadURLFive = task.getResult().getDownloadUrl().toString();
+                                                                                if (mUriFive != null) {
+                                                                                    mFilesStorage.child(uidforimage + "5.jpg").putFile(mUriFive).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                                                                            if (task.isSuccessful()) {
+                                                                                                mDownloadURLFive = task.getResult().getDownloadUrl().toString();
 
 
 //                                                                                            --------------------------------Uploading image six-------------------
-                                                                                                            if (mUriSix != null) {
-                                                                                                                mFilesStorage.child(uidforimage + "6.jpg").putFile(mUriSix).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                                                                                                    @Override
-                                                                                                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                                                                                                        if (task.isSuccessful()) {
-                                                                                                                            mDownloadURLSix = task.getResult().getDownloadUrl().toString();
-
-
-                                                                                                                            HashMap<String, Object> newpostmap = new HashMap<>();
-                                                                                                                            newpostmap.put("title", postTitle);
-                                                                                                                            newpostmap.put("date", ServerValue.TIMESTAMP);
-                                                                                                                            newpostmap.put("url1", mDownloadURLOne);
-                                                                                                                            newpostmap.put("url2", mDownloadURLTwo);
-                                                                                                                            newpostmap.put("url3", mDownloadURLThree);
-                                                                                                                            newpostmap.put("url4", mDownloadURLFour);
-                                                                                                                            newpostmap.put("url5", mDownloadURLFive);
-                                                                                                                            newpostmap.put("url6", mDownloadURLSix);
-                                                                                                                            newpostmap.put("thumb_image", mThumbDownloadURLOne);
-
-                                                                                                                            mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                                @Override
-                                                                                                                                public void onSuccess(Void aVoid) {
-                                                                                                                                    sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
-                                                                                                                                    mProgressDialog.dismiss();
-                                                                                                                                    Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
-                                                                                                                                }
-                                                                                                                            });
-
-                                                                                                                        }
-                                                                                                                    }
-                                                                                                                });
-                                                                                                            } else {
+                                                                                                if (mUriSix != null) {
+                                                                                                    mFilesStorage.child(uidforimage + "6.jpg").putFile(mUriSix).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                                                                                        @Override
+                                                                                                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                                                                                            if (task.isSuccessful()) {
+                                                                                                                mDownloadURLSix = task.getResult().getDownloadUrl().toString();
 
                                                                                                                 HashMap<String, Object> newpostmap = new HashMap<>();
                                                                                                                 newpostmap.put("title", postTitle);
@@ -431,125 +408,249 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                 newpostmap.put("url5", mDownloadURLFive);
                                                                                                                 newpostmap.put("url6", mDownloadURLSix);
                                                                                                                 newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                                                                                newpostmap.put("posted_by", userWhoPosted);
+                                                                                                                newpostmap.put("image_uid", uidforimage);
 
-                                                                                                                mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                    @Override
-                                                                                                                    public void onSuccess(Void aVoid) {
-                                                                                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
-                                                                                                                        mProgressDialog.dismiss();
-                                                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
-                                                                                                                    }
-                                                                                                                });
+                                                                                                                if (userWhoPosted.equals("admin")) {
+                                                                                                                    mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                        @Override
+                                                                                                                        public void onSuccess(Void aVoid) {
+                                                                                                                            sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
+                                                                                                                            mProgressDialog.dismiss();
+                                                                                                                            Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                                        }
+                                                                                                                    });
+                                                                                                                } else if (!userWhoPosted.equals("admin")) {
+                                                                                                                    newpostmap.put("school", mSchool);
+                                                                                                                    newpostmap.put("faculty", mFaculty);
+                                                                                                                    newpostmap.put("department", mDepartment);
+                                                                                                                    newpostmap.put("level", mlevel);
+
+                                                                                                                    mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                        @Override
+                                                                                                                        public void onSuccess(Void aVoid) {
+                                                                                                                            mProgressDialog.dismiss();
+                                                                                                                            Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                                        }
+                                                                                                                    });
+                                                                                                                }
+
+
                                                                                                             }
                                                                                                         }
-                                                                                                    }
-                                                                                                });
-                                                                                            } else {
+                                                                                                    });
+                                                                                                } else {
 
-                                                                                                HashMap<String, Object> newpostmap = new HashMap<>();
-                                                                                                newpostmap.put("title", postTitle);
-                                                                                                newpostmap.put("date", ServerValue.TIMESTAMP);
-                                                                                                newpostmap.put("url1", mDownloadURLOne);
-                                                                                                newpostmap.put("url2", mDownloadURLTwo);
-                                                                                                newpostmap.put("url3", mDownloadURLThree);
-                                                                                                newpostmap.put("url4", mDownloadURLFour);
-                                                                                                newpostmap.put("url5", mDownloadURLFive);
-                                                                                                newpostmap.put("url6", mDownloadURLSix);
-                                                                                                newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                                                                    HashMap<String, Object> newpostmap = new HashMap<>();
+                                                                                                    newpostmap.put("title", postTitle);
+                                                                                                    newpostmap.put("date", ServerValue.TIMESTAMP);
+                                                                                                    newpostmap.put("url1", mDownloadURLOne);
+                                                                                                    newpostmap.put("url2", mDownloadURLTwo);
+                                                                                                    newpostmap.put("url3", mDownloadURLThree);
+                                                                                                    newpostmap.put("url4", mDownloadURLFour);
+                                                                                                    newpostmap.put("url5", mDownloadURLFive);
+                                                                                                    newpostmap.put("url6", mDownloadURLSix);
+                                                                                                    newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                                                                    newpostmap.put("posted_by", userWhoPosted);
+                                                                                                    newpostmap.put("image_uid", uidforimage);
 
-                                                                                                mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                    @Override
-                                                                                                    public void onSuccess(Void aVoid) {
-                                                                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
-                                                                                                        mProgressDialog.dismiss();
-                                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                    if (userWhoPosted.equals("admin")) {
+                                                                                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                            @Override
+                                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                                sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
+                                                                                                                mProgressDialog.dismiss();
+                                                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                            }
+                                                                                                        });
+                                                                                                    } else if (!userWhoPosted.equals("admin")) {
+                                                                                                        newpostmap.put("school", mSchool);
+                                                                                                        newpostmap.put("faculty", mFaculty);
+                                                                                                        newpostmap.put("department", mDepartment);
+                                                                                                        newpostmap.put("level", mlevel);
+
+                                                                                                        mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                            @Override
+                                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                                mProgressDialog.dismiss();
+                                                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                                                                                                            }
+                                                                                                        });
                                                                                                     }
-                                                                                                });
+                                                                                                }
                                                                                             }
                                                                                         }
-                                                                                    }
-                                                                                });
-                                                                            } else {
-                                                                                HashMap<String, Object> newpostmap = new HashMap<>();
-                                                                                newpostmap.put("title", postTitle);
-                                                                                newpostmap.put("date", ServerValue.TIMESTAMP);
-                                                                                newpostmap.put("url1", mDownloadURLOne);
-                                                                                newpostmap.put("url2", mDownloadURLTwo);
-                                                                                newpostmap.put("url3", mDownloadURLThree);
-                                                                                newpostmap.put("url4", mDownloadURLFour);
-                                                                                newpostmap.put("url5", mDownloadURLFive);
-                                                                                newpostmap.put("url6", mDownloadURLSix);
-                                                                                newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                                                    });
+                                                                                } else {
 
-                                                                                mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                    @Override
-                                                                                    public void onSuccess(Void aVoid) {
-                                                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
-                                                                                        mProgressDialog.dismiss();
-                                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                    HashMap<String, Object> newpostmap = new HashMap<>();
+                                                                                    newpostmap.put("title", postTitle);
+                                                                                    newpostmap.put("date", ServerValue.TIMESTAMP);
+                                                                                    newpostmap.put("url1", mDownloadURLOne);
+                                                                                    newpostmap.put("url2", mDownloadURLTwo);
+                                                                                    newpostmap.put("url3", mDownloadURLThree);
+                                                                                    newpostmap.put("url4", mDownloadURLFour);
+                                                                                    newpostmap.put("url5", mDownloadURLFive);
+                                                                                    newpostmap.put("url6", mDownloadURLSix);
+                                                                                    newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                                                    newpostmap.put("posted_by", userWhoPosted);
+                                                                                    newpostmap.put("image_uid", uidforimage);
+
+                                                                                    if (userWhoPosted.equals("admin")) {
+                                                                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
+                                                                                                mProgressDialog.dismiss();
+                                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                            }
+                                                                                        });
+                                                                                    } else if (!userWhoPosted.equals("admin")) {
+                                                                                        newpostmap.put("school", mSchool);
+                                                                                        newpostmap.put("faculty", mFaculty);
+                                                                                        newpostmap.put("department", mDepartment);
+                                                                                        newpostmap.put("level", mlevel);
+                                                                                        mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                mProgressDialog.dismiss();
+                                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                            }
+                                                                                        });
                                                                                     }
-                                                                                });
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
-                                                                });
-                                                            } else {
-                                                                HashMap<String, Object> newpostmap = new HashMap<>();
-                                                                newpostmap.put("title", postTitle);
-                                                                newpostmap.put("date", ServerValue.TIMESTAMP);
-                                                                newpostmap.put("url1", mDownloadURLOne);
-                                                                newpostmap.put("url2", mDownloadURLTwo);
-                                                                newpostmap.put("url3", mDownloadURLThree);
-                                                                newpostmap.put("url4", mDownloadURLFour);
-                                                                newpostmap.put("url5", mDownloadURLFive);
-                                                                newpostmap.put("url6", mDownloadURLSix);
-                                                                newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                                    });
+                                                                } else {
 
-                                                                mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void aVoid) {
-                                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
-                                                                        mProgressDialog.dismiss();
-                                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                    HashMap<String, Object> newpostmap = new HashMap<>();
+                                                                    newpostmap.put("title", postTitle);
+                                                                    newpostmap.put("date", ServerValue.TIMESTAMP);
+                                                                    newpostmap.put("url1", mDownloadURLOne);
+                                                                    newpostmap.put("url2", mDownloadURLTwo);
+                                                                    newpostmap.put("url3", mDownloadURLThree);
+                                                                    newpostmap.put("url4", mDownloadURLFour);
+                                                                    newpostmap.put("url5", mDownloadURLFive);
+                                                                    newpostmap.put("url6", mDownloadURLSix);
+                                                                    newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                                    newpostmap.put("posted_by", userWhoPosted);
+                                                                    newpostmap.put("image_uid", uidforimage);
+
+                                                                    if (userWhoPosted.equals("admin")) {
+                                                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
+                                                                                mProgressDialog.dismiss();
+                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        });
+                                                                    } else if (!userWhoPosted.equals("admin")) {
+                                                                        newpostmap.put("school", mSchool);
+                                                                        newpostmap.put("faculty", mFaculty);
+                                                                        newpostmap.put("department", mDepartment);
+                                                                        newpostmap.put("level", mlevel);
+                                                                        mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                mProgressDialog.dismiss();
+                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        });
                                                                     }
-                                                                });
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                });
-                                            } else {
-                                                HashMap<String, Object> newpostmap = new HashMap<>();
-                                                newpostmap.put("title", postTitle);
-                                                newpostmap.put("date", ServerValue.TIMESTAMP);
-                                                newpostmap.put("url1", mDownloadURLOne);
-                                                newpostmap.put("url2", mDownloadURLTwo);
-                                                newpostmap.put("url3", mDownloadURLThree);
-                                                newpostmap.put("url4", mDownloadURLFour);
-                                                newpostmap.put("url5", mDownloadURLFive);
-                                                newpostmap.put("url6", mDownloadURLSix);
-                                                newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                    });
+                                                } else {
 
-                                                mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
-                                                        mProgressDialog.dismiss();
-                                                        Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                    HashMap<String, Object> newpostmap = new HashMap<>();
+                                                    newpostmap.put("title", postTitle);
+                                                    newpostmap.put("date", ServerValue.TIMESTAMP);
+                                                    newpostmap.put("url1", mDownloadURLOne);
+                                                    newpostmap.put("url2", mDownloadURLTwo);
+                                                    newpostmap.put("url3", mDownloadURLThree);
+                                                    newpostmap.put("url4", mDownloadURLFour);
+                                                    newpostmap.put("url5", mDownloadURLFive);
+                                                    newpostmap.put("url6", mDownloadURLSix);
+                                                    newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                                    newpostmap.put("posted_by", userWhoPosted);
+                                                    newpostmap.put("image_uid", uidforimage);
+
+                                                    if (userWhoPosted.equals("admin")) {
+                                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
+                                                                mProgressDialog.dismiss();
+                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                    } else if (!userWhoPosted.equals("admin")) {
+                                                        newpostmap.put("school", mSchool);
+                                                        newpostmap.put("faculty", mFaculty);
+                                                        newpostmap.put("department", mDepartment);
+                                                        newpostmap.put("level", mlevel);
+
+                                                        mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                mProgressDialog.dismiss();
+                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
                                                     }
-                                                });
+                                                }
                                             }
                                         }
+                                    });
+                                } else {
+
+                                    HashMap<String, Object> newpostmap = new HashMap<>();
+                                    newpostmap.put("title", postTitle);
+                                    newpostmap.put("date", ServerValue.TIMESTAMP);
+                                    newpostmap.put("url1", mDownloadURLOne);
+                                    newpostmap.put("url2", mDownloadURLTwo);
+                                    newpostmap.put("url3", mDownloadURLThree);
+                                    newpostmap.put("url4", mDownloadURLFour);
+                                    newpostmap.put("url5", mDownloadURLFive);
+                                    newpostmap.put("url6", mDownloadURLSix);
+                                    newpostmap.put("thumb_image", mThumbDownloadURLOne);
+                                    newpostmap.put("posted_by", userWhoPosted);
+                                    newpostmap.put("image_uid", uidforimage);
+
+                                    if (userWhoPosted.equals("admin")) {
+                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
+                                                mProgressDialog.dismiss();
+                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    } else if (!userWhoPosted.equals("admin")) {
+                                        newpostmap.put("school", mSchool);
+                                        newpostmap.put("faculty", mFaculty);
+                                        newpostmap.put("department", mDepartment);
+                                        newpostmap.put("level", mlevel);
+                                        mUserPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                mProgressDialog.dismiss();
+                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
                                     }
-                                });
-                            } else {
-                                mProgressDialog.dismiss();
-                                Toast.makeText(AdminActivity.this, "Could not Upload Image", Toast.LENGTH_SHORT).show();
+
+                                }
                             }
                         }
                     });
+
                 } else {
                     mProgressDialog.dismiss();
-                    Toast.makeText(AdminActivity.this, "Could not post to firebase", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminActivity.this, "Could not Upload Image", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -601,5 +702,12 @@ public class AdminActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void checkUser() {
+        userWhoPosted = getIntent().getStringExtra("user_id");
+        if (userWhoPosted == null) {
+            userWhoPosted = "admin";
+        }
     }
 }

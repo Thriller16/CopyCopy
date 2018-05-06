@@ -1,4 +1,5 @@
 package com.lawrene.falcon.copycopy;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -45,25 +46,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-//
+    //
     SearchView searchView;
-    DatabaseReference mUserDatabase;
-    DatabaseReference mPostDatabase;
-
-    StorageReference mFilesStore;
     FirebaseAuth mFireAuth;
     Toolbar mToolbar;
     FirebaseUser mCurrentUser;
-
-    String mUserSchool;
-    String mUserFaculty;
-    String mUserDepartment;
-    String mUserLevel;
-    RecyclerView mUserlist;
-
     ViewPager mViewPager;
     SectionsPagerAdapter mSectionsPagerAdapter;
     TabLayout mTabLayout;
+    DatabaseReference mUserDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,167 +62,83 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mFireAuth = FirebaseAuth.getInstance();
-        mFilesStore = FirebaseStorage.getInstance().getReference();
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         mCurrentUser = mFireAuth.getCurrentUser();
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        searchView = (SearchView)findViewById(R.id.app_bar_search);
-        mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
+        searchView = (SearchView) findViewById(R.id.app_bar_search);
+        mToolbar = (Toolbar) findViewById(R.id.admin_approve);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("CopyCopy");
+        getSupportActionBar().setTitle("Approve Posts");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        mUserlist = (RecyclerView)findViewById(R.id.main_recycler_view);
-        mUserlist.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setReverseLayout(true);
-        mUserlist.setLayoutManager(linearLayoutManager);
+//        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-//
-//        //Tabs
-//        mViewPager = (ViewPager)findViewById(R.id.main_pager);
-//        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-//
-//        mViewPager.setAdapter(mSectionsPagerAdapter);
-//
-//        mTabLayout = (TabLayout)findViewById(R.id.main_tabs);
-//        mTabLayout.setupWithViewPager(mViewPager);
-//
+        //Tabs
+        mViewPager = (ViewPager) findViewById(R.id.main_pager);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawerLayout);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
+        mTabLayout.setupWithViewPager(mViewPager);
+
+
+        //Setting up navigationbar
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView= (NavigationView)findViewById(R.id.navView);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navView);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawerLayout);
-                drawerLayout.closeDrawer(GravityCompat.START);
-                return true;
-            }
-        });
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create channel to show notifications.
-            String channelId  = getString(R.string.default_notification_channel_id);
-            String channelName = getString(R.string.default_notification_channel_name);
-            NotificationManager notificationManager =
-                    getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
-                    channelName, NotificationManager.IMPORTANCE_LOW));
-        }
-
-        if (getIntent().getExtras() != null) {
-            for (String key : getIntent().getExtras().keySet()) {
-                Object value = getIntent().getExtras().get(key);
-                Log.d("TAG", "Key: " + key + " Value: " + value);
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-    private void loaduserdata() {
-        mUserDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mUserSchool = dataSnapshot.child("school").getValue().toString();
-                mUserFaculty = dataSnapshot.child("faculty").getValue().toString();
-                mUserDepartment = dataSnapshot.child("department").getValue().toString();
-                mUserLevel = dataSnapshot.child("level").getValue().toString();
-
-                //------------------------Getting all the relevant posts depending on the user--------------
-                mPostDatabase = FirebaseDatabase.getInstance().getReference().child("Posts").child("Schools")
-                        .child(mUserSchool).child(mUserFaculty).child(mUserDepartment).child(mUserLevel);
-
-                FirebaseRecyclerAdapter<Solution, MainViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Solution, MainViewHolder>(
-                        Solution.class,
-                        R.layout.list_item,
-                        MainViewHolder.class,
-                        mPostDatabase
-
-                ) {
-                    @Override
-                    protected void populateViewHolder(final MainViewHolder viewHolder, final Solution model, int position) {
-                        viewHolder.setTitle(model.getTitle());
-                    viewHolder.setImage(model.getThumb_image(), getApplicationContext());
-
-                        final String postkey = getRef(position).getKey();
-
-                        //Changing the date from server time to normal time
-                        mPostDatabase.child(postkey).addValueEventListener(new ValueEventListener() {
+                switch (item.getItemId()) {
+                    case R.id.user_upload:
+                        mUserDatabase.child(mCurrentUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                String postdate = dataSnapshot.child("date").getValue().toString();
+                                String can_upload = dataSnapshot.child("can_upload").getValue().toString();
+                                Toast.makeText(MainActivity.this, "" + can_upload, Toast.LENGTH_SHORT).show();
+
+                                if (can_upload.equals("true")) {
+                                    Intent uploadIntent = new Intent(MainActivity.this, AdminActivity.class);
+                                    uploadIntent.putExtra("user_id", mCurrentUser.getUid());
+                                    startActivity(uploadIntent);
+                                }
 //
-                                GetTimeAgo getTimeAgo = new GetTimeAgo();
-                                long poostdate = Long.parseLong(postdate);
-                                String convertedtime = getTimeAgo.getTimeAgo(poostdate, MainActivity.this);
-                                viewHolder.setDate(convertedtime);
-
-
+                                else {
+                                    startActivity(new Intent(MainActivity.this, BecomeEligible.class));
+                                }
                             }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-                        viewHolder.mview.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
-                            Intent profile_intent = new Intent(MainActivity.this, DetailsActivity.class);
-                            profile_intent.putExtra("post_school", mUserSchool);
-                            profile_intent.putExtra("post_faculty", mUserFaculty);
-                            profile_intent.putExtra("post_department", mUserDepartment);
-                            profile_intent.putExtra("post_level", mUserLevel);
-                            profile_intent.putExtra("post_key", postkey);
-                            startActivity(profile_intent);
-                        }
-                    });
+                        public void onCancelled (DatabaseError databaseError){
+
                     }
-                };
-
-                mUserlist.setAdapter(firebaseRecyclerAdapter);
-
+                });
+                Intent uploadIntent = new Intent(MainActivity.this, AdminActivity.class);
+                uploadIntent.putExtra("user_id", mCurrentUser.getUid());
+                startActivity(uploadIntent);
+                break;
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
+            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+        }
+    });
+}
 
     @Override
     protected void onStart() {
         super.onStart();
 
         FirebaseUser currentUser = mFireAuth.getCurrentUser();
-        if(currentUser == null){
+        if (currentUser == null) {
             sendToStart();
         }
-
-        else{
-            loaduserdata();
-        }
     }
-
 
     private void sendToStart() {
         Intent startIntent = new Intent(MainActivity.this, LoginActivity.class);
@@ -256,14 +163,14 @@ public class MainActivity extends AppCompatActivity {
 
 //                ---------------------Test subscribe to topics------------
             case R.id.about:
-                // [START subscribe_topics]
-                FirebaseMessaging.getInstance().subscribeToTopic("news");
-                // [END subscribe_topics]
-
-                // Log and toast
-                String msg = getString(R.string.msg_subscribed);
-                Log.i("TAG", msg);
-                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+//                // [START subscribe_topics]
+//                FirebaseMessaging.getInstance().subscribeToTopic("news");
+//                // [END subscribe_topics]
+//
+//                // Log and toast
+//                String msg = getString(R.string.msg_subscribed);
+//                Log.i("TAG", msg);
+//                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.settings:
@@ -277,7 +184,4 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
 }

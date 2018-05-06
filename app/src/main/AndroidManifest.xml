@@ -3,9 +3,9 @@
     package="com.lawrene.falcon.copycopy">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".CopyCopy"
@@ -15,50 +15,50 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
-        <meta-data android:name="firebase_messaging_auto_init_enabled"
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
             android:value="false" />
-        <meta-data android:name="firebase_analytics_collection_enabled"
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
             android:value="false" />
 
         <activity android:name=".MainActivity">
+        </activity>
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity
+            android:name=".DetailsActivity"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="com.lawrene.falcon.copycopy_TARGET_NOTIFICATION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".AdminActivity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".BecomeEligible" />
+        <activity android:name=".AdminApprove">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
-
-        <activity
-            android:name=".DetailsActivity"
-            android:parentActivityName=".MainActivity" >
-            <intent-filter>
-                <action android:name="com.lawrene.falcon.copycopy_TARGET_NOTIFICATION"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-            </intent-filter>
-        </activity>
-
-        <activity android:name=".AdminActivity"></activity>
-        <activity
-            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat" />
-
-        <service
-            android:name=".MyFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".MyFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>
