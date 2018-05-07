@@ -243,6 +243,7 @@ public class RegisterActivity extends AppCompatActivity {
                     });
 
                 }else{
+                    Toast.makeText(RegisterActivity.this, "Error creating account please try again", Toast.LENGTH_SHORT).show();
                     mProgressDialog.dismiss();
                 }
             }

@@ -32,13 +32,7 @@
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity
-            android:name=".DetailsActivity"
-            android:parentActivityName=".MainActivity">
-            <intent-filter>
-                <action android:name="com.lawrene.falcon.copycopy_TARGET_NOTIFICATION" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            android:name=".DetailsActivity" android:parentActivityName=".MainActivity">
         </activity>
         <activity android:name=".AdminActivity" />
         <activity
@@ -57,7 +51,7 @@
         </service>
 
         <activity android:name=".BecomeEligible" />
-        <activity android:name=".AdminApprove">
+        <activity android:name=".AdminApprove" android:parentActivityName=".MainActivity">
 
         </activity>
     </application>

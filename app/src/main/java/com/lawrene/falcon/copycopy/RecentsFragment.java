@@ -3,6 +3,7 @@ package com.lawrene.falcon.copycopy;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,12 +58,21 @@ public class RecentsFragment extends Fragment {
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         mCurrentUser = mFireAuth.getCurrentUser();
 
-        mUserlist = (RecyclerView)mView.findViewById(R.id.main_recycler_view);
+
+        mUserlist = (RecyclerView) mView.findViewById(R.id.main_recycler_view);
         mUserlist.setHasFixedSize(true);
+        FloatingActionButton floatingActionButton = (FloatingActionButton) mView.findViewById(R.id.uploadFab);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         mUserlist.setLayoutManager(linearLayoutManager);
 
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkUsers();
+            }
+        });
 
         return mView;
     }
@@ -93,7 +103,7 @@ public class RecentsFragment extends Fragment {
                     @Override
                     protected void populateViewHolder(final MainViewHolder viewHolder, final Solution model, int position) {
                         viewHolder.setTitle(model.getTitle());
-                    viewHolder.setImage(model.getThumb_image(), getContext());
+                        viewHolder.setImage(model.getThumb_image(), getContext());
 
                         final String postkey = getRef(position).getKey();
 
@@ -101,13 +111,16 @@ public class RecentsFragment extends Fragment {
                         mPostDatabase.child(postkey).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                String postdate = dataSnapshot.child("date").getValue().toString();
+                                if (dataSnapshot.exists()) {
+                                    String postdate = dataSnapshot.child("date").getValue().toString();
 //
-                                GetTimeAgo getTimeAgo = new GetTimeAgo();
-                                long poostdate = Long.parseLong(postdate);
-                                String convertedtime = getTimeAgo.getTimeAgo(poostdate, getContext());
-                                viewHolder.setDate(convertedtime);
+                                    GetTimeAgo getTimeAgo = new GetTimeAgo();
+                                    long poostdate = Long.parseLong(postdate);
+                                    String convertedtime = getTimeAgo.getTimeAgo(poostdate, getContext());
+                                    viewHolder.setDate(convertedtime);
 //                                firebaseRecyclerAdapter.notifyDataSetChanged();
+                                }
+
 
                             }
 
@@ -118,17 +131,17 @@ public class RecentsFragment extends Fragment {
                         });
 
                         viewHolder.mview.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent profile_intent = new Intent(getContext(), DetailsActivity.class);
-                            profile_intent.putExtra("post_school", mUserSchool);
-                            profile_intent.putExtra("post_faculty", mUserFaculty);
-                            profile_intent.putExtra("post_department", mUserDepartment);
-                            profile_intent.putExtra("post_level", mUserLevel);
-                            profile_intent.putExtra("post_key", postkey);
-                            startActivity(profile_intent);
-                        }
-                    });
+                            @Override
+                            public void onClick(View view) {
+                                Intent profile_intent = new Intent(getContext(), DetailsActivity.class);
+                                profile_intent.putExtra("post_school", mUserSchool);
+                                profile_intent.putExtra("post_faculty", mUserFaculty);
+                                profile_intent.putExtra("post_department", mUserDepartment);
+                                profile_intent.putExtra("post_level", mUserLevel);
+                                profile_intent.putExtra("post_key", postkey);
+                                startActivity(profile_intent);
+                            }
+                        });
 //                        Toast.makeText(getContext(), "" + postkey, Toast.LENGTH_SHORT).show();
                     }
                 };
@@ -148,5 +161,30 @@ public class RecentsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         loaduserdata();
+    }
+
+    public void checkUsers() {
+        mUserDatabase.child(mCurrentUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String can_upload = dataSnapshot.child("can_upload").getValue().toString();
+                Toast.makeText(getContext(), "" + can_upload, Toast.LENGTH_SHORT).show();
+
+                if (can_upload.equals("true")) {
+                    Intent uploadIntent = new Intent(getContext(), AdminActivity.class);
+                    uploadIntent.putExtra("user_id", mCurrentUser.getUid());
+                    startActivity(uploadIntent);
+                }
+//
+                else {
+                    startActivity(new Intent(getContext(), BecomeEligible.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

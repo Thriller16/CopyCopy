@@ -87,9 +87,11 @@ public class AdminActivity extends AppCompatActivity {
     StorageReference mFilesStorage;
     StorageReference mThumbFireStorage;
 
+
     String mSchool, mFaculty, mDepartment, mlevel;
     FirebaseAuth mFireAuth;
     String userWhoPosted = "";
+
 
     private static final int GALLERY_PICK = 1;
 
@@ -97,6 +99,7 @@ public class AdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
+
 
         //-------------------------Setting up  firebase---------------------
         mFireAuth = FirebaseAuth.getInstance();
@@ -109,9 +112,8 @@ public class AdminActivity extends AppCompatActivity {
         mUserPostDatabase = FirebaseDatabase.getInstance().getReference().child("PostsByUsers");
         mNotificationsDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-
-        Log.i("TAG", "The user who posted is" + userWhoPosted);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -158,9 +160,6 @@ public class AdminActivity extends AppCompatActivity {
     public void loadAllViews() {
 
         mToolbar = findViewById(R.id.admin_appBar);
-//        setSupportActionBar(mToolbar);
-//        getSupportActionBar().setTitle("Administrator");
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         mToolbar.setTitle("Upload Files");
 
@@ -417,6 +416,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                         public void onSuccess(Void aVoid) {
                                                                                                                             sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                                             mProgressDialog.dismiss();
+                                                                                                                            mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                                                                             Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                                         }
                                                                                                                     });
@@ -430,6 +430,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                         @Override
                                                                                                                         public void onSuccess(Void aVoid) {
                                                                                                                             mProgressDialog.dismiss();
+                                                                                                                            mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                                                                             Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                                         }
                                                                                                                     });
@@ -460,6 +461,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                             public void onSuccess(Void aVoid) {
                                                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                                 mProgressDialog.dismiss();
+                                                                                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                             }
                                                                                                         });
@@ -473,6 +475,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void aVoid) {
                                                                                                                 mProgressDialog.dismiss();
+                                                                                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                                                                 Toast.makeText(AdminActivity.this, "File Uploaded Successfully", Toast.LENGTH_SHORT).show();
                                                                                                             }
                                                                                                         });
@@ -502,6 +505,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                             public void onSuccess(Void aVoid) {
                                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                 mProgressDialog.dismiss();
+                                                                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                             }
                                                                                         });
@@ -514,6 +518,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                             @Override
                                                                                             public void onSuccess(Void aVoid) {
                                                                                                 mProgressDialog.dismiss();
+                                                                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                             }
                                                                                         });
@@ -543,6 +548,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                             public void onSuccess(Void aVoid) {
                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                 mProgressDialog.dismiss();
+                                                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                             }
                                                                         });
@@ -555,6 +561,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                             @Override
                                                                             public void onSuccess(Void aVoid) {
                                                                                 mProgressDialog.dismiss();
+                                                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                             }
                                                                         });
@@ -584,6 +591,7 @@ public class AdminActivity extends AppCompatActivity {
                                                             public void onSuccess(Void aVoid) {
                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                 mProgressDialog.dismiss();
+                                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                             }
                                                         });
@@ -597,6 +605,7 @@ public class AdminActivity extends AppCompatActivity {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
                                                                 mProgressDialog.dismiss();
+                                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                             }
                                                         });
@@ -626,6 +635,7 @@ public class AdminActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                 mProgressDialog.dismiss();
+                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -638,6 +648,7 @@ public class AdminActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 mProgressDialog.dismiss();
+                                                mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
                                                 Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -661,7 +672,6 @@ public class AdminActivity extends AppCompatActivity {
         mUsersDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int i = 0;
 
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
 
@@ -670,9 +680,6 @@ public class AdminActivity extends AppCompatActivity {
                     String faculty = ds.child("faculty").getValue().toString();
                     String department = ds.child("department").getValue().toString();
                     String level = ds.child("level").getValue().toString();
-
-//                    Toast.makeText(AdminActivity.this, key + school + faculty + department + level, Toast.LENGTH_SHORT).show();
-
 
                     HashMap<String, Object> notificationHashmap = new HashMap<>();
                     notificationHashmap.put("title", title);

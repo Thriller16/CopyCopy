@@ -26,7 +26,6 @@ import com.squareup.picasso.Picasso;
 
 public class DetailsActivity extends AppCompatActivity {
 
-    Button button;
     DatabaseReference mPostDatabase;
     Toolbar mToolbar;
     TextView titleText, dateText;
@@ -55,7 +54,6 @@ public class DetailsActivity extends AppCompatActivity {
         full_image_four = (ImageView) findViewById(R.id.img_four);
         full_image_five = (ImageView) findViewById(R.id.img_five);
         full_image_six = (ImageView) findViewById(R.id.img_six);
-        button = (Button)findViewById(R.id.buttin);
 
         String postSchool = getIntent().getStringExtra("post_school");
         String postFaculty = getIntent().getStringExtra("post_faculty");

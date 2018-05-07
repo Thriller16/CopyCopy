@@ -111,25 +111,25 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
 
-                        @Override
-                        public void onCancelled (DatabaseError databaseError){
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
-                break;
+                            }
+                        });
+                        break;
                     case R.id.logout_nav:
                         mFireAuth.signOut();
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();
                         break;
-            }
+                }
 
-            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+                DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
-        }
-    });
-}
+            }
+        });
+    }
 
     @Override
     protected void onStart() {
@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.about:
+                startActivity(new Intent(MainActivity.this, AdminApprove.class));
                 break;
 
             case R.id.settings:
@@ -175,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     long previousTime;
+
     @Override
     public void onBackPressed() {
         searchView = (SearchView) findViewById(R.id.app_bar_search);
@@ -187,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 moveTaskToBack(true);
 
             } else {
-                Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Touch again to exit", Toast.LENGTH_SHORT).show();
             }
         }
     }
