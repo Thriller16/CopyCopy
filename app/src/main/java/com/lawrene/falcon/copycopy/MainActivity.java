@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     TabLayout mTabLayout;
     DatabaseReference mUserDatabase;
     android.support.v7.widget.SearchView searchView;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,10 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navView);
+         navigationView = (NavigationView) findViewById(R.id.navView);
+
+//        updateUserEarnings();
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -146,7 +150,28 @@ public class MainActivity extends AppCompatActivity {
         startActivity(startIntent);
         finish();
     }
-
+//
+//    public void updateUserEarnings(){
+//
+//        mUserDatabase.child(mCurrentUser.getUid()).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.exists()){
+//                    String total_earnings = dataSnapshot.child("earnings").getValue().toString();
+//                    View headerView = navigationView.getHeaderView(0);
+//                    TextView navUsername = (TextView) headerView.findViewById(R.id.total_earnings);
+//                    navUsername.setText("₦" + total_earnings + ".00");
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//
+//    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.app_main, menu);

@@ -55,12 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     Spinner mLevelSpinner;
     TextView mGotologin;
     ProgressDialog mProgressDialog;
-    Toolbar mToolbar;
     FirebaseUser mCurrentUser;
-//    DatabaseReference mSchoolsDatabase;
-//    DatabaseReference mFacultiesDatabase;
-//    DatabaseReference mDepartmentsDatabase;
-//    DatabaseReference mLevelsDatabase;
     DatabaseReference mUserDatabase;
 
     String mEmail, mPassword, mSchool, mFaculty, mDepartment, mlevel;
@@ -78,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
         mCurrentUser = mFireAuth.getCurrentUser();
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
+
         //-----------------------------Setting up the views-----------------------
         final EditText EmailEdt = (EditText)findViewById(R.id.email_reg);
         final EditText PasswordEdt = (EditText)findViewById(R.id.passw_reg);
@@ -87,7 +83,6 @@ public class RegisterActivity extends AppCompatActivity {
         mFacultySpinner = (Spinner)findViewById(R.id.facultyspinner);
         mDepartmentSpinner = (Spinner)findViewById(R.id.dept_spinner);
         mLevelSpinner = (Spinner)findViewById(R.id.level_spinner);
-
 
 
         //---------------------Setting up the arrayadapter to use for the spinners------------------
@@ -132,7 +127,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
@@ -154,7 +148,6 @@ public class RegisterActivity extends AppCompatActivity {
                         mLevelSpinner.setAdapter(eng_levels_adapter);
                         break;
 
-
                     case "Science":
                         alldepartments = alldepartmentsSci;
                         alllevels = alllevelsSci;
@@ -171,82 +164,82 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
         mDepartmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-//                Toast.makeText(getApplicationContext(), allschools[position], Toast.LENGTH_LONG).show();
                 mDepartment = alldepartments[position];
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
         mLevelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-//                Toast.makeText(getApplicationContext(), allschools[position], Toast.LENGTH_LONG).show();
                 mlevel = alllevels[position];
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }
 
     private void registernewuser(String email, String password, final String school, final String faculty, final String department, final String level) {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setTitle("Please wait");
-        mProgressDialog.setMessage("Creating your account");
-        mProgressDialog.show();
+        if(email.equals("") || password.equals("")){
+            Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setTitle("Please wait");
+            mProgressDialog.setMessage("Creating your account");
+            mProgressDialog.show();
 
-        //---------------------------First step authentication--------------------------
-        mFireAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+            //---------------------------First step authentication--------------------------
+            mFireAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
 
-                    String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
-                    HashMap<String, String> userMap = new HashMap<>();
-                    userMap.put("device_token", deviceToken);
-                    userMap.put("can_upload","true");
-                    userMap.put("earnings", "0");
-                    userMap.put("school", school);
-                    userMap.put("faculty", faculty);
-                    userMap.put("department", department);
-                    userMap.put("level", level);
+                        HashMap<String, String> userMap = new HashMap<>();
+                        userMap.put("device_token", deviceToken);
+                        userMap.put("can_upload","true");
+                        userMap.put("earnings", "0");
+                        userMap.put("school", school);
+                        userMap.put("faculty", faculty);
+                        userMap.put("department", department);
+                        userMap.put("level", level);
 
-                    FirebaseUser currentuser = mFireAuth.getCurrentUser();
+                        FirebaseUser currentuser = mFireAuth.getCurrentUser();
 
-                    //------------------------Second step pushing uservalues to db---------------------------
-                    mUserDatabase.child(currentuser.getUid()).setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT).show();
-                                mProgressDialog.dismiss();
-                                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                        //------------------------Second step pushing uservalues to db---------------------------
+                        mUserDatabase.child(currentuser.getUid()).setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT).show();
+                                    mProgressDialog.dismiss();
+                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
 
-                            }else{
-                                Toast.makeText(RegisterActivity.this, "Error during registration", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(RegisterActivity.this, "Error during registration", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
 
-                }else{
-                    Toast.makeText(RegisterActivity.this, "Error creating account please try again", Toast.LENGTH_SHORT).show();
-                    mProgressDialog.dismiss();
+                    }else{
+                        Toast.makeText(RegisterActivity.this, "Error creating account please try again", Toast.LENGTH_SHORT).show();
+                        mProgressDialog.dismiss();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }

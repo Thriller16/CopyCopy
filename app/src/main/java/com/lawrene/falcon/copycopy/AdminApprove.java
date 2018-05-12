@@ -61,20 +61,11 @@ public class AdminApprove extends AppCompatActivity {
         mPostlist = (RecyclerView) findViewById(R.id.approve_recycler_view);
         mPostlist.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-//        linearLayoutManager.setReverseLayout(true);
         mPostlist.setLayoutManager(linearLayoutManager);
     }
 
 
     private void loaduserdata() {
-//        mUserDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                mUserSchool = dataSnapshot.child("school").getValue().toString();
-//                mUserFaculty = dataSnapshot.child("faculty").getValue().toString();
-//                mUserDepartment = dataSnapshot.child("department").getValue().toString();
-//                mUserLevel = dataSnapshot.child("level").getValue().toString();
-
         //------------------------Getting all the relevant posts depending on the user--------------
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Solution, ApproveViewHolder>(
 
@@ -82,7 +73,6 @@ public class AdminApprove extends AppCompatActivity {
                 R.layout.list_item_admin_approve,
                 ApproveViewHolder.class,
                 mUserPost
-
         )
 
         {
@@ -91,28 +81,40 @@ public class AdminApprove extends AppCompatActivity {
             protected void populateViewHolder(final ApproveViewHolder viewHolder, Solution model, int position) {
                 viewHolder.setTitle(model.getTitle());
                 viewHolder.setImage(model.getThumb_image(), AdminApprove.this);
-
                 final String postkey = getRef(position).getKey();
 
                 viewHolder.changeChecked(postkey);
-
-
                 mUserPost.child(postkey).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
                         if (dataSnapshot.exists()) {
                             String postdate = dataSnapshot.child("date").getValue().toString();
-
-//                        approvePost(postkey);
+                            final String mUserSchool = dataSnapshot.child("school").getValue().toString();
+                            final String mUserFaculty = dataSnapshot.child("faculty").getValue().toString();
+                            final String mUserDepartment = dataSnapshot.child("department").getValue().toString();
+                            final String mUserLevel = dataSnapshot.child("level").getValue().toString();
 
                             GetTimeAgo getTimeAgo = new GetTimeAgo();
                             long poostdate = Long.parseLong(postdate);
                             String convertedtime = getTimeAgo.getTimeAgo(poostdate, AdminApprove.this);
                             viewHolder.setDate(convertedtime);
-//                        firebaseRecyclerAdapter.notifyDataSetChanged();
-                        }
 
+
+                            viewHolder.mview.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent profile_intent = new Intent(AdminApprove.this, PostApproveDetails.class);
+                                    profile_intent.putExtra("post_school", mUserSchool);
+                                    profile_intent.putExtra("post_faculty", mUserFaculty);
+                                    profile_intent.putExtra("post_department", mUserDepartment);
+                                    profile_intent.putExtra("post_level", mUserLevel);
+                                    profile_intent.putExtra("post_key", postkey);
+                                    startActivity(profile_intent);
+//                                    Toast.makeText(AdminApprove.this, "Item clicked" + mUserSchool+ mUserFaculty+mUserDepartment+mUserLevel, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
                     }
 
                     @Override
@@ -121,21 +123,7 @@ public class AdminApprove extends AppCompatActivity {
                     }
                 });
 
-                Toast.makeText(AdminApprove.this, "" + postkey, Toast.LENGTH_SHORT).show();
-
-                viewHolder.mview.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-//                        Intent profile_intent = new Intent(AdminApprove.this, DetailsActivity.class);
-//                        profile_intent.putExtra("post_school", mUserSchool);
-//                        profile_intent.putExtra("post_faculty", mUserFaculty);
-//                        profile_intent.putExtra("post_department", mUserDepartment);
-//                        profile_intent.putExtra("post_level", mUserLevel);
-//                        profile_intent.putExtra("post_key", postkey);
-//                        startActivity(profile_intent);
-                        Toast.makeText(AdminApprove.this, "Item clicked", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                Toast.makeText(AdminApprove.this, "" + postkey, Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -172,28 +160,28 @@ public class AdminApprove extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     approvePost(key);
-//                    Toast.makeText(get, "", Toast.LENGTH_SHORT).show();
-//                    Log.i("TAG", "" + key);
                     imageView.setImageResource(R.drawable.ic_thumb_up_black_24dp);
                 }
             });
         }
 
+
         private void approvePost(final String postkey) {
             final DatabaseReference mUserPost = FirebaseDatabase.getInstance().getReference().child("PostsByUsers");
             final DatabaseReference mPosts = FirebaseDatabase.getInstance().getReference().child("Posts").child("Schools");
+            final DatabaseReference mUsers = FirebaseDatabase.getInstance().getReference().child("Users");
 
             mUserPost.child(postkey).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()){
+                    if (dataSnapshot.exists()) {
 
                         final String mUserSchool = dataSnapshot.child("school").getValue().toString();
                         final String mUserFaculty = dataSnapshot.child("faculty").getValue().toString();
                         final String mUserDepartment = dataSnapshot.child("department").getValue().toString();
                         final String mUserLevel = dataSnapshot.child("level").getValue().toString();
                         String mImageUid = dataSnapshot.child("image_uid").getValue().toString();
-                        String mPostedBy = dataSnapshot.child("posted_by").getValue().toString();
+                        final String mPostedBy = dataSnapshot.child("posted_by").getValue().toString();
                         String mThumbImage = dataSnapshot.child("thumb_image").getValue().toString();
                         final String mTitle = dataSnapshot.child("title").getValue().toString();
                         String mUrl1 = dataSnapshot.child("url1").getValue().toString();
@@ -223,7 +211,13 @@ public class AdminApprove extends AppCompatActivity {
                                 mUserPost.child(postkey).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+//
+//                                        mUsers.child(mPostedBy).child("earnings").setValue("5").addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                            @Override
+//                                            public void onSuccess(Void aVoid) {
                                         sendRequiredUsersNotifications(mTitle, mUserSchool, mUserFaculty, mUserDepartment, mUserLevel);
+//                                            }
+//                                        });
                                     }
                                 });
                             }
@@ -256,31 +250,26 @@ public class AdminApprove extends AppCompatActivity {
                         String department = ds.child("department").getValue().toString();
                         String level = ds.child("level").getValue().toString();
 
-//                    Toast.makeText(AdminApprove.this, key + school + faculty + department + level, Toast.LENGTH_SHORT).show();
-
-
                         HashMap<String, Object> notificationHashmap = new HashMap<>();
                         notificationHashmap.put("title", title);
                         notificationHashmap.put("message", "Click here to see");
                         notificationHashmap.put("time", ServerValue.TIMESTAMP);
 
-
                         if (school.equals(userSchool) && faculty.equals(userFaculty) && department.equals(userDepartment) && level.equals(userLevel)) {
                             mNotificationsDatabase.child(key).push().setValue(notificationHashmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-//                                    Toast.makeText(AdminApprove.this, "Notification sent to required users", Toast.LENGTH_SHORT).show();
+                                    Log.i("TAG", "Notification has been sent to the selected users");
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-
                                 }
                             });
                         }
                     }
-
                 }
+
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {

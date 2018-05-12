@@ -100,7 +100,6 @@ public class AdminActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
 
-
         //-------------------------Setting up  firebase---------------------
         mFireAuth = FirebaseAuth.getInstance();
 
@@ -235,7 +234,6 @@ public class AdminActivity extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(galleryIntent, "Select Image to Upload"), GALLERY_PICK);
             }
         });
-
 
         mSchoolSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -411,7 +409,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                 newpostmap.put("image_uid", uidforimage);
 
                                                                                                                 if (userWhoPosted.equals("admin")) {
-                                                                                                                    mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                    mPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                         @Override
                                                                                                                         public void onSuccess(Void aVoid) {
                                                                                                                             sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
@@ -426,7 +424,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                     newpostmap.put("department", mDepartment);
                                                                                                                     newpostmap.put("level", mlevel);
 
-                                                                                                                    mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                    mUserPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                         @Override
                                                                                                                         public void onSuccess(Void aVoid) {
                                                                                                                             mProgressDialog.dismiss();
@@ -456,7 +454,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                     newpostmap.put("image_uid", uidforimage);
 
                                                                                                     if (userWhoPosted.equals("admin")) {
-                                                                                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                        mPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void aVoid) {
                                                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
@@ -471,7 +469,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                         newpostmap.put("department", mDepartment);
                                                                                                         newpostmap.put("level", mlevel);
 
-                                                                                                        mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                        mUserPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void aVoid) {
                                                                                                                 mProgressDialog.dismiss();
@@ -500,7 +498,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                     newpostmap.put("image_uid", uidforimage);
 
                                                                                     if (userWhoPosted.equals("admin")) {
-                                                                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                        mPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                             @Override
                                                                                             public void onSuccess(Void aVoid) {
                                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
@@ -514,7 +512,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                         newpostmap.put("faculty", mFaculty);
                                                                                         newpostmap.put("department", mDepartment);
                                                                                         newpostmap.put("level", mlevel);
-                                                                                        mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                        mUserPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                             @Override
                                                                                             public void onSuccess(Void aVoid) {
                                                                                                 mProgressDialog.dismiss();
@@ -543,7 +541,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                     newpostmap.put("image_uid", uidforimage);
 
                                                                     if (userWhoPosted.equals("admin")) {
-                                                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        mPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void aVoid) {
                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
@@ -557,7 +555,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                         newpostmap.put("faculty", mFaculty);
                                                                         newpostmap.put("department", mDepartment);
                                                                         newpostmap.put("level", mlevel);
-                                                                        mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        mUserPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void aVoid) {
                                                                                 mProgressDialog.dismiss();
@@ -586,7 +584,7 @@ public class AdminActivity extends AppCompatActivity {
                                                     newpostmap.put("image_uid", uidforimage);
 
                                                     if (userWhoPosted.equals("admin")) {
-                                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        mPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
@@ -601,7 +599,7 @@ public class AdminActivity extends AppCompatActivity {
                                                         newpostmap.put("department", mDepartment);
                                                         newpostmap.put("level", mlevel);
 
-                                                        mUserPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        mUserPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
                                                                 mProgressDialog.dismiss();
@@ -630,7 +628,7 @@ public class AdminActivity extends AppCompatActivity {
                                     newpostmap.put("image_uid", uidforimage);
 
                                     if (userWhoPosted.equals("admin")) {
-                                        mPostDatabase.child(mSchool).child(mFaculty).child(mDepartment).child(mlevel).child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        mPostDatabase.child(uidforimage).setValue(newpostmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);

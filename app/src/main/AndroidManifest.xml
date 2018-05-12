@@ -32,8 +32,8 @@
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity
-            android:name=".DetailsActivity" android:parentActivityName=".MainActivity">
-        </activity>
+            android:name=".DetailsActivity"
+            android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".AdminActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
@@ -51,9 +51,10 @@
         </service>
 
         <activity android:name=".BecomeEligible" />
-        <activity android:name=".AdminApprove" android:parentActivityName=".MainActivity">
-
-        </activity>
+        <activity
+            android:name=".AdminApprove"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".PostApproveDetails" android:parentActivityName=".AdminApprove"></activity>
     </application>
 
 </manifest>

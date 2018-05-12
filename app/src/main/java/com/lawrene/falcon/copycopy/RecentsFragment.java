@@ -44,7 +44,6 @@ public class RecentsFragment extends Fragment {
 
 
     public RecentsFragment() {
-        // Required empty public constructor
     }
 
 
@@ -118,15 +117,11 @@ public class RecentsFragment extends Fragment {
                                     long poostdate = Long.parseLong(postdate);
                                     String convertedtime = getTimeAgo.getTimeAgo(poostdate, getContext());
                                     viewHolder.setDate(convertedtime);
-//                                firebaseRecyclerAdapter.notifyDataSetChanged();
                                 }
-
-
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-
                             }
                         });
 
@@ -142,7 +137,6 @@ public class RecentsFragment extends Fragment {
                                 startActivity(profile_intent);
                             }
                         });
-//                        Toast.makeText(getContext(), "" + postkey, Toast.LENGTH_SHORT).show();
                     }
                 };
 

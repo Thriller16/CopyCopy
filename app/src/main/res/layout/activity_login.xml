@@ -3,24 +3,34 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.lawrene.falcon.copycopy.LoginActivity">
 
 <include layout="@layout/app_bar_layout" android:id="@+id/login_toolbar"/>
+
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="0dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="100dp"
             android:src="@drawable/ic_person_outline_black_24dp"/>
-    </LinearLayout>
 
+        <TextView
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:layout_marginTop="10dp"
+            android:text="CopyCopy"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_margin="30dp"
@@ -29,21 +39,25 @@
         android:layout_height="wrap_content">
 
         <EditText
+            android:textColor="#fff"
+            android:textColorHint="#fff"
+            android:backgroundTint="#fff"
             android:drawableLeft="@drawable/ic_person_black_24dp"
             android:drawablePadding="12dp"
-            android:background="#fff"
             android:padding="16dp"
             android:id="@+id/email_login"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:hint="E-mail"/>
 
         <EditText
+            android:textColor="#fff"
+            android:backgroundTint="#fff"
+            android:textColorHint="#fff"
             android:drawableLeft="@drawable/ic_lock_black_24dp"
             android:drawablePadding="12dp"
-            android:background="#fff"
             android:padding="16dp"
             android:id="@+id/passw_login"
             android:layout_marginTop="20dp"
@@ -51,6 +65,18 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:hint="Password"/>
+
+        <Button
+
+            android:layout_gravity="center"
+            android:textColor="#fff"
+            android:background="@drawable/rounded_button"
+            android:id="@+id/login_btn"
+            android:textSize="18sp"
+            android:layout_marginTop="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log In"/>
 
         <TextView
             android:id="@+id/go_to_reg"
@@ -62,22 +88,14 @@
             android:gravity="right"
             android:text="Need a new account?"
             android:textColor="#fff"/>
+
+
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:textColor="@color/colorPrimaryDark"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:background="#fff"
-            android:id="@+id/login_btn"
-            android:layout_margin="30dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign In"/>
     </RelativeLayout>
 
 

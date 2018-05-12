@@ -22,10 +22,11 @@
                 app:tabSelectedTextColor="#fff"
                 app:tabTextColor="#fff"
                 android:fillViewport="true"
-                app:tabIndicatorColor="#fff"
+                app:tabIndicatorColor="#FFF"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary">
             </android.support.design.widget.TabLayout>
+
         </android.support.design.widget.AppBarLayout>
 
 
