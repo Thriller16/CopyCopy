@@ -52,7 +52,6 @@ public class PostApproveDetails extends AppCompatActivity {
 
 
         mUserPostDatabase = FirebaseDatabase.getInstance().getReference().child("PostByUsers").child(postId);
-
         loadpostdetails();
 
     }
