@@ -5,34 +5,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:src="@drawable/ic_person_outline_black_24dp"/>
-
     <LinearLayout
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="20dp"
-        android:gravity="end"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:textColor="#fff"
-            android:textSize="18sp"
-            android:text="Total Earnings"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:textColor="#fff"
-            android:id="@+id/total_earnings"
-            android:textSize="16sp"
-            android:text="₦0.00"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        android:layout_height="180dp">
 
     </LinearLayout>
 
