@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
         else{
 
             if(email.equals("admin") && password.equals("admin")){
-                startActivity(new Intent(LoginActivity.this, AdminActivity.class));
+                startActivity(new Intent(LoginActivity.this, PostActivity.class));
             }
 
             else{

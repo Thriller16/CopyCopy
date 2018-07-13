@@ -197,6 +197,8 @@ public class AdminApprove extends AppCompatActivity {
                         postMap.put("posted_by", mPostedBy);
                         postMap.put("thumb_image", mThumbImage);
                         postMap.put("title", mTitle);
+                        postMap.put("isInFav", "false");
+                        postMap.put("postkey", postkey);
                         postMap.put("url1", mUrl1);
                         postMap.put("url2", mUrl2);
                         postMap.put("url3", mUrl3);
@@ -240,7 +242,7 @@ public class AdminApprove extends AppCompatActivity {
             mUsersDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    int i = 0;
+//                    int i = 0;
 
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
 

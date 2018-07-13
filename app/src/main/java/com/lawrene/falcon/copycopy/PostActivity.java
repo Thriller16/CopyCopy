@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,7 +39,7 @@ import java.util.HashMap;
 
 import id.zelory.compressor.Compressor;
 
-public class AdminActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity {
 
     //---------------------All arrays-------------------//
     String[] allschools = {"University of Uyo", "University of Port Harcourt", "University of Lagos"};
@@ -98,7 +97,7 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin);
+        setContentView(R.layout.activity_post);
 
         //-------------------------Setting up  firebase---------------------
         mFireAuth = FirebaseAuth.getInstance();
@@ -210,10 +209,10 @@ public class AdminActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (mUriOne == null) {
-                    Toast.makeText(AdminActivity.this, "Please select at least one image to continue", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PostActivity.this, "Please select at least one image to continue", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    mProgressDialog = new ProgressDialog(AdminActivity.this);
+                    mProgressDialog = new ProgressDialog(PostActivity.this);
                     mProgressDialog.setTitle("Please Wait");
                     mProgressDialog.setMessage("Uploading Image");
                     mProgressDialog.setCanceledOnTouchOutside(false);
@@ -256,11 +255,11 @@ public class AdminActivity extends AppCompatActivity {
                         alldepartments = alldepartmentsEng;
                         alllevels = alllevelsEng;
 
-                        ArrayAdapter<String> eng_depts_adapter = new ArrayAdapter<>(AdminActivity.this, android.R.layout.simple_spinner_item, alldepartments);
+                        ArrayAdapter<String> eng_depts_adapter = new ArrayAdapter<>(PostActivity.this, android.R.layout.simple_spinner_item, alldepartments);
                         eng_depts_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         mDepartmentSpinner.setAdapter(eng_depts_adapter);
 
-                        ArrayAdapter<String> eng_levels_adapter = new ArrayAdapter<>(AdminActivity.this, android.R.layout.simple_spinner_item, alllevels);
+                        ArrayAdapter<String> eng_levels_adapter = new ArrayAdapter<>(PostActivity.this, android.R.layout.simple_spinner_item, alllevels);
                         eng_levels_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         mLevelSpinner.setAdapter(eng_levels_adapter);
                         break;
@@ -270,11 +269,11 @@ public class AdminActivity extends AppCompatActivity {
                         alldepartments = alldepartmentsSci;
                         alllevels = alllevelsSci;
 
-                        ArrayAdapter<String> science_adapter = new ArrayAdapter<>(AdminActivity.this, android.R.layout.simple_spinner_item, alldepartments);
+                        ArrayAdapter<String> science_adapter = new ArrayAdapter<>(PostActivity.this, android.R.layout.simple_spinner_item, alldepartments);
                         science_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         mDepartmentSpinner.setAdapter(science_adapter);
 
-                        ArrayAdapter<String> sci_levels_adapter = new ArrayAdapter<>(AdminActivity.this, android.R.layout.simple_spinner_item, alllevels);
+                        ArrayAdapter<String> sci_levels_adapter = new ArrayAdapter<>(PostActivity.this, android.R.layout.simple_spinner_item, alllevels);
                         sci_levels_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         mLevelSpinner.setAdapter(sci_levels_adapter);
                 }
@@ -314,7 +313,7 @@ public class AdminActivity extends AppCompatActivity {
     private void putFullImage() {
 
         File thumb_filePath = new File(mUriOne.getPath());
-        Bitmap thumb_bitmap = new Compressor(AdminActivity.this)
+        Bitmap thumb_bitmap = new Compressor(PostActivity.this)
                 .setMaxWidth(200)
                 .setMaxHeight(200)
                 .setQuality(75)
@@ -415,7 +414,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                             sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                                             mProgressDialog.dismiss();
                                                                                                                             mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                                                                            Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                                            Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                                         }
                                                                                                                     });
                                                                                                                 } else if (!userWhoPosted.equals("admin")) {
@@ -429,7 +428,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                         public void onSuccess(Void aVoid) {
                                                                                                                             mProgressDialog.dismiss();
                                                                                                                             mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                                                                            Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                                            Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                                         }
                                                                                                                     });
                                                                                                                 }
@@ -460,7 +459,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                                 mProgressDialog.dismiss();
                                                                                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                                             }
                                                                                                         });
                                                                                                     } else if (!userWhoPosted.equals("admin")) {
@@ -474,7 +473,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                             public void onSuccess(Void aVoid) {
                                                                                                                 mProgressDialog.dismiss();
                                                                                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                                                                                                                Toast.makeText(PostActivity.this, "File Uploaded Successfully", Toast.LENGTH_SHORT).show();
                                                                                                             }
                                                                                                         });
                                                                                                     }
@@ -504,7 +503,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                                 mProgressDialog.dismiss();
                                                                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                             }
                                                                                         });
                                                                                     } else if (!userWhoPosted.equals("admin")) {
@@ -517,7 +516,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                             public void onSuccess(Void aVoid) {
                                                                                                 mProgressDialog.dismiss();
                                                                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                                             }
                                                                                         });
                                                                                     }
@@ -547,7 +546,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                                 mProgressDialog.dismiss();
                                                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                             }
                                                                         });
                                                                     } else if (!userWhoPosted.equals("admin")) {
@@ -560,7 +559,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                             public void onSuccess(Void aVoid) {
                                                                                 mProgressDialog.dismiss();
                                                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                                             }
                                                                         });
                                                                     }
@@ -590,7 +589,7 @@ public class AdminActivity extends AppCompatActivity {
                                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                                 mProgressDialog.dismiss();
                                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                             }
                                                         });
                                                     } else if (!userWhoPosted.equals("admin")) {
@@ -604,7 +603,7 @@ public class AdminActivity extends AppCompatActivity {
                                                             public void onSuccess(Void aVoid) {
                                                                 mProgressDialog.dismiss();
                                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                                             }
                                                         });
                                                     }
@@ -634,7 +633,7 @@ public class AdminActivity extends AppCompatActivity {
                                                 sendRequiredUsersNotifications(postTitle, mSchool, mFaculty, mDepartment, mlevel);
                                                 mProgressDialog.dismiss();
                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     } else if (!userWhoPosted.equals("admin")) {
@@ -647,7 +646,7 @@ public class AdminActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 mProgressDialog.dismiss();
                                                 mUriOne = null;mUriTwo = null;mUriThree = null; mUriFour = null; mUriFive = null; mUriSix = null;
-                                                Toast.makeText(AdminActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(PostActivity.this, "File Uploaded Succesfully", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }
@@ -659,7 +658,7 @@ public class AdminActivity extends AppCompatActivity {
 
                 } else {
                     mProgressDialog.dismiss();
-                    Toast.makeText(AdminActivity.this, "Could not Upload Image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PostActivity.this, "Could not Upload Image", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -689,7 +688,7 @@ public class AdminActivity extends AppCompatActivity {
                         mNotificationsDatabase.child(key).push().setValue(notificationHashmap).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(AdminActivity.this, "Notification sent to required users", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PostActivity.this, "Notification sent to required users", Toast.LENGTH_SHORT).show();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override

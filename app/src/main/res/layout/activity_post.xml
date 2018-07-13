@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lawrene.falcon.copycopy.AdminActivity">
+    tools:context="com.lawrene.falcon.copycopy.PostActivity">
 
     <include layout="@layout/app_bar_layout" android:id="@+id/admin_appBar"/>
 
