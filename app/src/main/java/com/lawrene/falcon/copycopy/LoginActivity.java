@@ -38,11 +38,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mFireAuth = FirebaseAuth.getInstance();
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-//        mToolbar = (Toolbar)findViewById(R.id.login_toolbar);
-//        setSupportActionBar(mToolbar);
-//        getSupportActionBar().setTitle("Sign In");
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+<<<<<<< HEAD
         mEmail = (EditText)findViewById(R.id.email_login);
         mPassword = (EditText)findViewById(R.id.passw_login);
         mLoginBtn =(Button)findViewById(R.id.login_btn);
@@ -117,5 +114,11 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         }
+=======
+        mEmail = (EditText) findViewById(R.id.email_login);
+        mPassword = (EditText) findViewById(R.id.passw_login);
+        mLoginBtn = (Button) findViewById(R.id.login_btn);
+        mGotoreg = (TextView) findViewById(R.id.go_to_reg);
+>>>>>>> a8e3a2135d6986e4ede79f2204c98676cb29777d
     }
 }

@@ -28,14 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
-    //
-    FirebaseAuth mFireAuth;
+
     Toolbar mToolbar;
-    FirebaseUser mCurrentUser;
-    ViewPager mViewPager;
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    TabLayout mTabLayout;
-    DatabaseReference mUserDatabase;
     android.support.v7.widget.SearchView searchView;
     NavigationView navigationView;
 
@@ -44,25 +38,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFireAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFireAuth.getCurrentUser();
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-
         mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("CopyCopy");
+        getSupportActionBar().setTitle("School Planner");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-        //Tabs
-        mViewPager = (ViewPager) findViewById(R.id.main_pager);
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
-        mTabLayout.setupWithViewPager(mViewPager);
-
 
         //Setting up navigationbar
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -71,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.navView);
+<<<<<<< HEAD
 
 //        updateUserEarnings();
 
@@ -108,27 +88,29 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();
                         break;
+=======
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if(item.getItemId() == R.id.reminder){
+                    startActivity(new Intent(MainActivity.this, ReminderActivity.class));
+>>>>>>> a8e3a2135d6986e4ede79f2204c98676cb29777d
                 }
-
                 DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
         });
+<<<<<<< HEAD
 
         updateUserDept();
     }
+=======
+>>>>>>> a8e3a2135d6986e4ede79f2204c98676cb29777d
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        FirebaseUser currentUser = mFireAuth.getCurrentUser();
-        if (currentUser == null) {
-            sendToStart();
-        }
     }
 
+<<<<<<< HEAD
     private void sendToStart() {
         Intent startIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(startIntent);
@@ -180,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+=======
+    long previousTime;
+>>>>>>> a8e3a2135d6986e4ede79f2204c98676cb29777d
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -189,43 +174,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.logout:
-                mFireAuth.signOut();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
-                break;
-
-            case R.id.about:
-                startActivity(new Intent(MainActivity.this, AdminApprove.class));
-                break;
-
-            case R.id.settings:
-                break;
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    long previousTime;
-
-    @Override
     public void onBackPressed() {
-        searchView = (SearchView) findViewById(R.id.app_bar_search);
-        if (!searchView.isIconified()) {
-            searchView.setIconified(true);
-            return;
-        } else {
-            if (2000 + previousTime > (previousTime = System.currentTimeMillis())) {
-                MainActivity.this.finish();
-                moveTaskToBack(true);
-
-            } else {
-                Toast.makeText(getBaseContext(), "Touch again to exit", Toast.LENGTH_SHORT).show();
-            }
-        }
+//        searchView = (SearchView) findViewById(R.id.app_bar_search);
+//        if (!searchView.isIconified()) {
+//            searchView.setIconified(true);
+//            return;
+//        } else {
+//            if (2000 + previousTime > (previousTime = System.currentTimeMillis())) {
+//                MainActivity.this.finish();
+//                moveTaskToBack(true);
+//
+//            } else {
+//                Toast.makeText(getBaseContext(), "Touch again to exit", Toast.LENGTH_SHORT).show();
+//            }
+//        }
     }
 }
